@@ -1,8 +1,9 @@
 // State
 let logs = JSON.parse(localStorage.getItem('poopLogs')) || [];
 let apiKey = localStorage.getItem('kimiApiKey') || 'sk-m0mC8mgXlKIGqykT6OU8HBETcZUGJ9GZCmZR5i47JwFKaKDz';
-let binId = localStorage.getItem('jsonBinId') || '';
-let binKey = localStorage.getItem('jsonBinKey') || '';
+// Hardcoded user credentials for Gist sync
+let binId = '6d9037939b6c6ef6217726592cbe4a45';
+let binKey = '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';
 let editingLogId = null;
 
 // DOM Elements
