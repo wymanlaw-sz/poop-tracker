@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Poop Tracker | 便便日记</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="glass-header">
+            <div class="logo">
+                <i class="fa-solid fa-poop"></i>
+                <h1>便便日记</h1>
+            </div>
+            <button id="settingsBtn" class="icon-btn" title="设置 API Key">
+                <i class="fa-solid fa-gear"></i>
+            </button>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="content-area">
+            
+            <!-- Log View (Form) -->
+            <section id="logView" class="view active">
+                <div class="card form-card">
+                    <h2 class="section-title">今日记录</h2>
+                    <form id="trackerForm">
+                        
+                        <!-- Essential Info -->
+                        <div class="form-group">
+                            <label for="recordTime"><i class="fa-regular fa-clock"></i> 排便时间</label>
+                            <input type="datetime-local" id="recordTime" required>
+                        </div>
+
+                        <!-- Stool Characteristics -->
+                        <div class="form-group slider-group">
+                            <label><i class="fa-solid fa-droplet"></i> 形状与干湿程度 (1:硬球 - 7:水状)</label>
+                            <input type="range" id="bristolScale" min="1" max="7" value="4">
+                            <div class="scale-labels">
+                                <span>干硬</span>
+                                <span>理想</span>
+                                <span>稀水</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="stoolColor"><i class="fa-solid fa-palette"></i> 颜色</label>
+                            <select id="stoolColor">
+                                <option value="棕色" selected>棕色 (健康)</option>
+                                <option value="浅黄">浅黄/金黄</option>
+                                <option value="绿色">绿色</option>
+                                <option value="黑色">黑色</option>
+                                <option value="红色">红色/带血</option>
+                                <option value="灰白">灰白色</option>
+                            </select>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group half">
+                                <label for="smoothness"><i class="fa-solid fa-wind"></i> 顺畅度</label>
+                                <select id="smoothness">
+                                    <option value="很顺畅">很顺畅</option>
+                                    <option value="一般">一般</option>
+                                    <option value="有些吃力">有些吃力</option>
+                                    <option value="便秘困难">便秘困难</option>
+                                </select>
+                            </div>
+                            <div class="form-group half">
+                                <label for="viscosity"><i class="fa-solid fa-cubes"></i> 粘稠度/挂壁</label>
+                                <select id="viscosity">
+                                    <option value="不粘">不粘马桶</option>
+                                    <option value="轻微粘">轻微粘落</option>
+                                    <option value="很粘糊">很粘糊/难冲</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Lifestyle Context -->
+                        <div class="divider"><span>生活与作息记录</span></div>
+
+                        <div class="form-group">
+                            <label for="meals"><i class="fa-solid fa-utensils"></i> 三餐吃了什么？</label>
+                            <textarea id="meals" placeholder="例如：早餐麦片，午餐外卖炸鸡，晚餐轻食沙拉，喝了多少水..." rows="2"></textarea>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group half">
+                                <label for="mood"><i class="fa-regular fa-face-smile"></i> 心情</label>
+                                <select id="mood">
+                                    <option value="开心平和">开心平和 😊</option>
+                                    <option value="一般般">一般般 😐</option>
+                                    <option value="压力大/焦虑">压力大/焦虑 😰</option>
+                                    <option value="疲惫">疲惫 😫</option>
+                                </select>
+                            </div>
+                            <div class="form-group half">
+                                <label for="exercise"><i class="fa-solid fa-person-running"></i> 运动情况</label>
+                                <select id="exercise">
+                                    <option value="无运动">无运动</option>
+                                    <option value="轻度(散步)">轻度 (如散步)</option>
+                                    <option value="中度(慢跑/健身)">中度 (慢跑/健身)</option>
+                                    <option value="高强度">高强度运动</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="sleep"><i class="fa-solid fa-bed"></i> 昨晚作息睡眠</label>
+                            <input type="text" id="sleep" placeholder="例如：12点睡，8点起，睡得不错">
+                        </div>
+
+                        <button type="submit" class="primary-btn pulse-btn">保存记录</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- History View -->
+            <section id="historyView" class="view">
+                <div class="card">
+                    <h2 class="section-title">历史记录</h2>
+                    <div id="historyList" class="history-container">
+                        <!-- History items will be injected here via JS -->
+                        <div class="empty-state">暂无记录，快去记一笔吧！</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analysis View -->
+            <section id="analysisView" class="view">
+                <div class="card analysis-card">
+                    <h2 class="section-title"><i class="fa-solid fa-wand-magic-sparkles gradient-text"></i> AI 健康分析 & 数据</h2>
+                    <p class="analysis-desc">基于您最近 30 天的记录，AI将为您生成专属的肠道健康与生活方式分析报告。</p>
+                    
+                    <div class="action-row">
+                        <button id="generateReportBtn" class="ai-btn" style="flex: 2;">
+                            <span class="btn-text">生成 AI 分析报告</span>
+                            <div class="spinner hidden"></div>
+                        </button>
+                        <button id="exportDataBtn" class="primary-btn mt-0" style="flex: 1; min-width: 100px;">
+                            <i class="fa-solid fa-file-export"></i> 导出数据
+                        </button>
+                    </div>
+
+                    <div id="reportContainer" class="report-box hidden">
+                        <div class="report-header">
+                            <h3>诊断报告</h3>
+                            <span class="report-date" id="reportDate"></span>
+                        </div>
+                        <div id="reportContent" class="report-content"></div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav glass-nav">
+            <button class="nav-item active" data-target="logView">
+                <i class="fa-solid fa-pen-to-square"></i>
+                <span>记录</span>
+            </button>
+            <button class="nav-item" data-target="historyView">
+                <i class="fa-solid fa-list-ul"></i>
+                <span>历史</span>
+            </button>
+            <button class="nav-item ai-tab" data-target="analysisView">
+                <div class="ai-icon-bg"><i class="fa-solid fa-robot"></i></div>
+                <span>AI分析</span>
+            </button>
+        </nav>
+
+        <!-- Settings Modal -->
+        <div id="settingsModal" class="modal hidden">
+            <div class="modal-content glass-modal">
+                <div class="modal-header">
+                    <h3>设置</h3>
+                    <button id="closeSettings" class="icon-btn"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="apiKey">Kimi API Key</label>
+                        <p class="hint">API Key 仅保存在您的浏览器本地，默认已为您填入提供的Key。</p>
+                        <input type="password" id="apiKey" placeholder="sk-...">
+                    </div>
+                    <div class="divider"><span>数据云同步设置</span></div>
+                    <div class="form-group">
+                        <label for="binId">JSONBin ID & API Key (可选)</label>
+                        <p class="hint">在 jsonbin.io 申请后，填入 Bin ID 以及 Access/Master Key 以开启数据云同步。</p>
+                        <input type="text" id="binId" placeholder="Bin ID (例如: 65123abc456...)" style="margin-bottom: 8px;">
+                        <input type="password" id="binKey" placeholder="Access Key / Master Key (例如: $2a$10$...)">
+                    </div>
+                    <button id="saveSettingsBtn" class="primary-btn">保存</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Marked.js for markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- HTML2PDF for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
