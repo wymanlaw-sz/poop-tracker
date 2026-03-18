@@ -1,9 +1,9 @@
 // State
 let logs = JSON.parse(localStorage.getItem('poopLogs')) || [];
 let apiKey = localStorage.getItem('kimiApiKey') || 'sk-m0mC8mgXlKIGqykT6OU8HBETcZUGJ9GZCmZR5i47JwFKaKDz';
-// Hardcoded user credentials for Gist sync
-let binId = '6d9037939b6c6ef6217726592cbe4a45';
-let binKey = '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';
+// Read from local storage (DO NOT HARDCODE - GitHub auto-revokes public tokens)
+let binId = localStorage.getItem('jsonBinId') || '';
+let binKey = localStorage.getItem('jsonBinKey') || '';
 let editingLogId = null;
 
 // DOM Elements
@@ -25,10 +25,10 @@ const submitBtn = form.querySelector('button[type="submit"]');
 
 // Cloud Sync Function
 async function syncToCloud() {
-    if (!binId || !binKey) return; // Only sync if user set a Gist ID and Token
+    if (!binId || !binKey) return false; // Only sync if user set a Gist ID and Token
     
     try {
-        await fetch(`https://api.github.com/gists/${binId}`, {
+        const response = await fetch(`https://api.github.com/gists/${binId}`, {
             method: 'PATCH',
             headers: {
                 'Accept': 'application/vnd.github.v3+json',
@@ -43,9 +43,17 @@ async function syncToCloud() {
                 }
             })
         });
-        console.log("Synced to GitHub Gist successfully!");
+        
+        if (response.ok) {
+            console.log("Synced to GitHub Gist successfully!");
+            return true;
+        } else {
+            console.error("Cloud sync failed with status:", response.status);
+            return false;
+        }
     } catch (err) {
         console.error("Cloud sync failed:", err);
+        return false;
     }
 }
 
@@ -143,7 +151,7 @@ settingsModal.addEventListener('click', (e) => {
 });
 
 // Form Submission logic
-form.addEventListener('submit', (e) => {
+form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const newLog = {
@@ -164,27 +172,41 @@ form.addEventListener('submit', (e) => {
         const index = logs.findIndex(l => l.id === editingLogId);
         if (index > -1) logs[index] = newLog;
         editingLogId = null; 
-        submitBtn.innerText = '✅ 更新成功';
     } else {
         logs.unshift(newLog); // Add to beginning
-        submitBtn.innerText = '✅ 保存成功';
     }
 
     localStorage.setItem('poopLogs', JSON.stringify(logs));
-    syncToCloud(); // Fire & forget sync
+    
+    const originalText = '保存记录';
+    submitBtn.innerText = '同步云端中...';
+    submitBtn.disabled = true;
+    
+    // Sync and handle visual feedback
+    if (binId && binKey) {
+        const success = await syncToCloud();
+        if (success) {
+            submitBtn.innerText = '✅ 云同步成功';
+            submitBtn.style.background = '#2ea043';
+        } else {
+            submitBtn.innerText = '❌ 云端保存失败';
+            submitBtn.style.background = '#d73a49';
+        }
+    } else {
+        submitBtn.innerText = '✅ 仅本地保存';
+        submitBtn.style.background = '#2ea043';
+    }
     
     // Clear textual inputs
     document.getElementById('meals').value = '';
     
-    const originalText = '保存记录';
-    submitBtn.style.background = '#2ea043';
-    
     setTimeout(() => {
         submitBtn.innerText = originalText;
         submitBtn.style.background = '';
+        submitBtn.disabled = false;
         navItems[1].click(); // switch to history view
         resetFormTime();
-    }, 800);
+    }, 1500);
 });
 
 // Helper for history formatting
