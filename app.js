@@ -127,6 +127,7 @@ navItems.forEach(item => {
 settingsBtn.addEventListener('click', () => {
     apiKeyInput.value = apiKey;
     binIdInput.value = binId;
+    binKeyInput.value = binKey;
     settingsModal.classList.remove('hidden');
 });
 
@@ -137,11 +138,13 @@ closeSettings.addEventListener('click', () => {
 saveSettingsBtn.addEventListener('click', () => {
     apiKey = apiKeyInput.value.trim();
     binId = binIdInput.value.trim();
+    binKey = binKeyInput.value.trim();
     localStorage.setItem('kimiApiKey', apiKey);
     localStorage.setItem('jsonBinId', binId);
+    localStorage.setItem('jsonBinKey', binKey);
     settingsModal.classList.add('hidden');
-    alert('设置已保存！\n如果在电脑端和手机端填入相同的 JSONBin ID，数据将双向自动同步。');
-    if (binId) loadFromCloud();
+    alert('设置已保存！\n如果在电脑端和手机端填入相同的 Gist ID 和 Token，数据将双向自动同步。');
+    if (binId && binKey) loadFromCloud();
 });
 
 settingsModal.addEventListener('click', (e) => {
