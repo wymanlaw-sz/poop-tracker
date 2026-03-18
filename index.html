@@ -186,12 +186,12 @@
                         <p class="hint">API Key 仅保存在您的浏览器本地，默认已为您填入提供的Key。</p>
                         <input type="password" id="apiKey" placeholder="sk-...">
                     </div>
-                    <div class="divider"><span>数据云同步设置</span></div>
+                    <div class="divider"><span>数据云同步设置 (推荐使用 GitHub Gist)</span></div>
                     <div class="form-group">
-                        <label for="binId">JSONBin ID & API Key (可选)</label>
-                        <p class="hint">在 jsonbin.io 申请后，填入 Bin ID 以及 Access/Master Key 以开启数据云同步。</p>
-                        <input type="text" id="binId" placeholder="Bin ID (例如: 65123abc456...)" style="margin-bottom: 8px;">
-                        <input type="password" id="binKey" placeholder="Access Key / Master Key (例如: $2a$10$...)">
+                        <label for="binId">Gist ID & GitHub Token (可选)</label>
+                        <p class="hint">填写 GitHub Gist ID 和具备 gist 权限的 Token (PAT) 以开启永久稳定的云同步。</p>
+                        <input type="text" id="binId" placeholder="Gist ID (例如: 8a9b...)" style="margin-bottom: 8px;">
+                        <input type="password" id="binKey" placeholder="GitHub Token (例如: ghp_...)">
                     </div>
                     <button id="saveSettingsBtn" class="primary-btn">保存</button>
                 </div>

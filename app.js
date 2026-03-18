@@ -24,19 +24,25 @@ const submitBtn = form.querySelector('button[type="submit"]');
 
 // Cloud Sync Function
 async function syncToCloud() {
-    if (!binId || !binKey) return; // Only sync if user set a Bin ID and Key
+    if (!binId || !binKey) return; // Only sync if user set a Gist ID and Token
     
     try {
-        await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
-            method: 'PUT',
+        await fetch(`https://api.github.com/gists/${binId}`, {
+            method: 'PATCH',
             headers: {
-                'Content-Type': 'application/json',
-                'X-Master-Key': binKey,
-                'X-Access-Key': binKey
+                'Accept': 'application/vnd.github.v3+json',
+                'Authorization': `Bearer ${binKey}`,
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ logs: logs })
+            body: JSON.stringify({
+                files: {
+                    'poop_logs.json': {
+                        content: JSON.stringify({ logs: logs }, null, 2)
+                    }
+                }
+            })
         });
-        console.log("Synced to cloud successfully!");
+        console.log("Synced to GitHub Gist successfully!");
     } catch (err) {
         console.error("Cloud sync failed:", err);
     }
@@ -45,17 +51,20 @@ async function syncToCloud() {
 async function loadFromCloud() {
     if (!binId || !binKey) return;
     try {
-        const response = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
+        const response = await fetch(`https://api.github.com/gists/${binId}`, {
             headers: {
-                'X-Master-Key': binKey,
-                'X-Access-Key': binKey
+                'Accept': 'application/vnd.github.v3+json',
+                'Authorization': `Bearer ${binKey}`
             }
         });
         const data = await response.json();
-        if (data && data.record && data.record.logs) {
-            logs = data.record.logs;
-            localStorage.setItem('poopLogs', JSON.stringify(logs));
-            renderHistory();
+        if (data && data.files && data.files['poop_logs.json']) {
+            const parsedContent = JSON.parse(data.files['poop_logs.json'].content);
+            if (parsedContent && parsedContent.logs) {
+                logs = parsedContent.logs;
+                localStorage.setItem('poopLogs', JSON.stringify(logs));
+                renderHistory();
+            }
         }
     } catch (err) {
         console.error("Failed to load from cloud:", err);
