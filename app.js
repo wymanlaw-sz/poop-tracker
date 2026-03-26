@@ -159,7 +159,7 @@ function addPoopEntry(data = null) {
         clone.querySelector('.poop-time').value = data.time;
         scoreInput.value = data.score;
         scoreDisplay.innerText = data.score + '分';
-        clone.querySelector('.poop-bristol').value = data.bristol;
+        clone.querySelector('.poop-bristol').value = 8 - parseInt(data.bristol || 4);
         clone.querySelector('.poop-color').value = data.color;
         clone.querySelector('.poop-smoothness').value = data.smoothness;
         clone.querySelector('.poop-viscosity').value = data.viscosity;
@@ -283,7 +283,7 @@ form.addEventListener('submit', async (e) => {
         poops.push({
             time: node.querySelector('.poop-time').value,
             score: node.querySelector('.poop-score').value,
-            bristol: node.querySelector('.poop-bristol').value,
+            bristol: String(8 - parseInt(node.querySelector('.poop-bristol').value)),
             color: node.querySelector('.poop-color').value,
             smoothness: node.querySelector('.poop-smoothness').value,
             viscosity: node.querySelector('.poop-viscosity').value

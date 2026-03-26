@@ -182,7 +182,8 @@ label {
 }
 
 input[type="text"],
-input[type="datetime-local"],
+input[type="date"],
+input[type="time"],
 input[type="password"],
 select,
 textarea {
@@ -195,6 +196,19 @@ textarea {
     font-family: inherit;
     font-size: 1rem;
     transition: var(--transition);
+    color-scheme: dark;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    opacity: 0.6;
+    cursor: pointer;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover,
+input[type="time"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
 }
 
 input:focus,
@@ -246,8 +260,16 @@ input[type=range]::-webkit-slider-runnable-track {
     width: 100%;
     height: 6px;
     cursor: pointer;
-    background: linear-gradient(90deg, #8b5a2b, #e5c07b, #556b2f); /* gradient visually hinting at stool types */
+    background: linear-gradient(90deg, #8b5a2b, #e5c07b, #556b2f); /* fallback */
     border-radius: 3px;
+}
+
+input[type=range].poop-score::-webkit-slider-runnable-track {
+    background: linear-gradient(90deg, var(--danger), #e5c07b, var(--primary-color));
+}
+
+input[type=range].poop-bristol::-webkit-slider-runnable-track {
+    background: linear-gradient(90deg, var(--danger), var(--primary-color), var(--danger));
 }
 input[type=range]::-webkit-slider-thumb {
     height: 20px;
