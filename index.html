@@ -10,7 +10,6 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Header -->
         <header class="glass-header">
             <div class="logo">
                 <i class="fa-solid fa-poop"></i>
@@ -26,76 +25,21 @@
             </div>
         </header>
 
-        <!-- Main Content Area -->
         <main class="content-area">
-            
-            <!-- Log View (Form) -->
             <section id="logView" class="view active">
                 <div class="card form-card">
-                    <h2 class="section-title">今日记录</h2>
+                    <h2 class="section-title">每日记录</h2>
                     <form id="trackerForm">
+                        <div class="form-group">
+                            <label for="recordDate"><i class="fa-regular fa-calendar"></i> 记录日期</label>
+                            <input type="date" id="recordDate" required>
+                        </div>
+
+                        <div id="poopsContainer"></div>
                         
-                        <!-- Essential Info -->
-                        <div class="form-group">
-                            <label for="recordTime"><i class="fa-regular fa-clock"></i> 排便时间</label>
-                            <input type="datetime-local" id="recordTime" required>
-                        </div>
+                        <button type="button" id="addPoopBtn" class="outline-btn"><i class="fa-solid fa-plus"></i> 追加当日排便记录</button>
 
-                        <!-- Stool Characteristics -->
-                        <div class="form-group slider-group">
-                            <label><i class="fa-solid fa-star"></i> 综合自评 (0-100分)</label>
-                            <input type="range" id="poopScore" min="0" max="100" value="80">
-                            <div class="scale-labels">
-                                <span>很差</span>
-                                <span id="scoreDisplay" style="font-weight:bold;color:var(--primary-color);">80分</span>
-                                <span>完美</span>
-                            </div>
-                        </div>
-
-                        <div class="form-group slider-group">
-                            <label><i class="fa-solid fa-droplet"></i> 形状与干湿程度 (1:硬球 - 7:水状)</label>
-                            <input type="range" id="bristolScale" min="1" max="7" value="4">
-                            <div class="scale-labels">
-                                <span>干硬</span>
-                                <span>理想</span>
-                                <span>稀水</span>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="stoolColor"><i class="fa-solid fa-palette"></i> 颜色</label>
-                            <select id="stoolColor">
-                                <option value="棕色" selected>棕色 (健康)</option>
-                                <option value="浅黄">浅黄/金黄</option>
-                                <option value="绿色">绿色</option>
-                                <option value="黑色">黑色</option>
-                                <option value="红色">红色/带血</option>
-                                <option value="灰白">灰白色</option>
-                            </select>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group half">
-                                <label for="smoothness"><i class="fa-solid fa-wind"></i> 顺畅度</label>
-                                <select id="smoothness">
-                                    <option value="很顺畅">很顺畅</option>
-                                    <option value="一般">一般</option>
-                                    <option value="有些吃力">有些吃力</option>
-                                    <option value="便秘困难">便秘困难</option>
-                                </select>
-                            </div>
-                            <div class="form-group half">
-                                <label for="viscosity"><i class="fa-solid fa-cubes"></i> 粘稠度/挂壁</label>
-                                <select id="viscosity">
-                                    <option value="不粘">不粘马桶</option>
-                                    <option value="轻微粘">轻微粘落</option>
-                                    <option value="很粘糊">很粘糊/难冲</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Lifestyle Context -->
-                        <div class="divider"><span>生活与作息记录</span></div>
+                        <div class="divider"><span>当日生活与作息评估</span></div>
 
                         <div class="form-group">
                             <label for="meals"><i class="fa-solid fa-utensils"></i> 三餐吃了什么？</label>
@@ -113,11 +57,11 @@
                                 </select>
                             </div>
                             <div class="form-group half">
-                                <label for="exercise"><i class="fa-solid fa-person-running"></i> 运动情况</label>
+                                <label for="exercise"><i class="fa-solid fa-person-running"></i> 运动</label>
                                 <select id="exercise">
                                     <option value="无运动">无运动</option>
-                                    <option value="轻度(散步)">轻度 (如散步)</option>
-                                    <option value="中度(慢跑/健身)">中度 (慢跑/健身)</option>
+                                    <option value="轻度(散步)">轻度 (散步)</option>
+                                    <option value="中度(慢跑/健身)">中度 (慢跑)</option>
                                     <option value="高强度">高强度运动</option>
                                 </select>
                             </div>
@@ -128,28 +72,24 @@
                             <input type="text" id="sleep" placeholder="例如：12点睡，8点起，睡得不错">
                         </div>
 
-                        <button type="submit" class="primary-btn pulse-btn">保存记录</button>
+                        <button type="submit" id="saveBtn" class="primary-btn pulse-btn">保存今日完整记录</button>
                     </form>
                 </div>
             </section>
 
-            <!-- History View -->
             <section id="historyView" class="view">
                 <div class="card">
                     <h2 class="section-title">历史记录</h2>
                     <div id="historyList" class="history-container">
-                        <!-- History items will be injected here via JS -->
                         <div class="empty-state">暂无记录，快去记一笔吧！</div>
                     </div>
                 </div>
             </section>
 
-            <!-- Analysis View -->
             <section id="analysisView" class="view">
                 <div class="card analysis-card">
                     <h2 class="section-title"><i class="fa-solid fa-wand-magic-sparkles gradient-text"></i> AI 健康分析 & 数据</h2>
                     <p class="analysis-desc">基于您最近 30 天的记录，AI将为您生成专属的肠道健康与生活方式分析报告。</p>
-                    
                     <div class="action-row">
                         <button id="generateReportBtn" class="ai-btn" style="flex: 2;">
                             <span class="btn-text">生成 AI 分析报告</span>
@@ -159,7 +99,6 @@
                             <i class="fa-solid fa-file-export"></i> 导出数据
                         </button>
                     </div>
-
                     <div id="reportContainer" class="report-box hidden">
                         <div class="report-header">
                             <h3>诊断报告</h3>
@@ -169,10 +108,8 @@
                     </div>
                 </div>
             </section>
-
         </main>
 
-        <!-- Bottom Navigation -->
         <nav class="bottom-nav glass-nav">
             <button class="nav-item active" data-target="logView">
                 <i class="fa-solid fa-pen-to-square"></i>
@@ -188,7 +125,6 @@
             </button>
         </nav>
 
-        <!-- Settings Modal -->
         <div id="settingsModal" class="modal hidden">
             <div class="modal-content glass-modal">
                 <div class="modal-header">
@@ -212,12 +148,63 @@
                 </div>
             </div>
         </div>
-
     </div>
 
-    <!-- Marked.js for markdown parsing -->
+    <template id="poopEntryTemplate">
+        <div class="poop-entry-card" style="margin-bottom: 20px; padding: 15px; border: 1px dashed var(--primary-color); border-radius: 8px; position: relative; background: rgba(0,0,0,0.1);">
+            <button type="button" class="remove-poop-btn" style="position: absolute; top: 10px; right: 10px; background: transparent; border: none; font-size: 1.2rem; cursor: pointer; color: var(--danger);"><i class="fa-solid fa-xmark"></i></button>
+            <div class="form-group">
+                <label><i class="fa-regular fa-clock"></i> 排便时间</label>
+                <input type="time" class="poop-time" required>
+            </div>
+            <div class="form-group slider-group">
+                <label><i class="fa-solid fa-star"></i> 综合自评 (0-100分)</label>
+                <input type="range" class="poop-score" min="0" max="100" value="80">
+                <div class="scale-labels">
+                    <span>很差</span>
+                    <span class="score-display" style="font-weight:bold;color:var(--primary-color);">80分</span>
+                    <span>完美</span>
+                </div>
+            </div>
+            <div class="form-group slider-group">
+                <label><i class="fa-solid fa-droplet"></i> 形状与干湿程度 (1:硬球 - 7:水状)</label>
+                <input type="range" class="poop-bristol" min="1" max="7" value="4">
+                <div class="scale-labels"><span>干硬</span><span>理想</span><span>稀水</span></div>
+            </div>
+            <div class="form-group">
+                <label><i class="fa-solid fa-palette"></i> 颜色</label>
+                <select class="poop-color">
+                    <option value="棕色" selected>棕色 (健康)</option>
+                    <option value="浅黄">浅黄/金黄</option>
+                    <option value="绿色">绿色</option>
+                    <option value="黑色">黑色</option>
+                    <option value="红色">红色/带血</option>
+                    <option value="灰白">灰白色</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <div class="form-group half">
+                    <label><i class="fa-solid fa-wind"></i> 顺畅度</label>
+                    <select class="poop-smoothness">
+                        <option value="很顺畅">很顺畅</option>
+                        <option value="一般" selected>一般</option>
+                        <option value="有些吃力">有些吃力</option>
+                        <option value="便秘困难">便秘困难</option>
+                    </select>
+                </div>
+                <div class="form-group half">
+                    <label><i class="fa-solid fa-cubes"></i> 粘稠度/挂壁</label>
+                    <select class="poop-viscosity">
+                        <option value="不粘" selected>不粘马桶</option>
+                        <option value="轻微粘">轻微粘落</option>
+                        <option value="很粘糊">很粘糊/难冲</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </template>
+
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <!-- HTML2PDF for PDF export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="app.js"></script>
 </body>
