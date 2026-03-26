@@ -21,6 +21,7 @@ const views = document.querySelectorAll('.view');
 const form = document.getElementById('trackerForm');
 const historyList = document.getElementById('historyList');
 const settingsBtn = document.getElementById('settingsBtn');
+const syncBtn = document.getElementById('syncBtn');
 const settingsModal = document.getElementById('settingsModal');
 const closeSettings = document.getElementById('closeSettings');
 const saveSettingsBtn = document.getElementById('saveSettingsBtn');
@@ -31,6 +32,15 @@ const generateReportBtn = document.getElementById('generateReportBtn');
 const reportContainer = document.getElementById('reportContainer');
 const reportContent = document.getElementById('reportContent');
 const submitBtn = form.querySelector('button[type="submit"]');
+
+// Handle Poop Score Display
+const poopScoreInput = document.getElementById('poopScore');
+const scoreDisplay = document.getElementById('scoreDisplay');
+if (poopScoreInput && scoreDisplay) {
+    poopScoreInput.addEventListener('input', (e) => {
+        scoreDisplay.innerText = e.target.value + '分';
+    });
+}
 
 // Cloud Sync Function
 async function syncToCloud() {
@@ -132,6 +142,36 @@ navItems.forEach(item => {
     });
 });
 
+// Handle user triggered manual sync
+if(syncBtn) {
+    syncBtn.addEventListener('click', async () => {
+        if (!binId || !binKey) {
+            alert("请先在设置中配置 GitHub Gist ID 和 Token。");
+            return;
+        }
+        
+        const originalHtml = syncBtn.innerHTML;
+        syncBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+        syncBtn.disabled = true;
+        
+        const success = await syncToCloud();
+        
+        if (success) {
+            syncBtn.innerHTML = '<i class="fa-solid fa-check" style="color: #2ea043;"></i>';
+            setTimeout(() => {
+                syncBtn.innerHTML = originalHtml;
+                syncBtn.disabled = false;
+            }, 2000);
+        } else {
+            syncBtn.innerHTML = '<i class="fa-solid fa-xmark" style="color: #da3633;"></i>';
+            setTimeout(() => {
+                syncBtn.innerHTML = originalHtml;
+                syncBtn.disabled = false;
+            }, 2000);
+        }
+    });
+}
+
 // Settings Modal specific logic
 settingsBtn.addEventListener('click', () => {
     apiKeyInput.value = apiKey;
@@ -169,6 +209,7 @@ form.addEventListener('submit', async (e) => {
     const newLog = {
         id: editingLogId || Date.now(), // update existing or create new
         timestamp: document.getElementById('recordTime').value,
+        score: document.getElementById('poopScore').value,
         bristol: document.getElementById('bristolScale').value,
         color: document.getElementById('stoolColor').value,
         smoothness: document.getElementById('smoothness').value,
@@ -190,38 +231,33 @@ form.addEventListener('submit', async (e) => {
 
     localStorage.setItem('poopLogs', JSON.stringify(logs));
     
-    const originalText = '保存记录';
-    submitBtn.innerText = '同步云端中...';
+    submitBtn.innerText = '✅ 已保存到本地';
+    submitBtn.style.background = '#2ea043';
     submitBtn.disabled = true;
-    
-    // Sync and handle visual feedback
-    if (binId && binKey) {
-        const success = await syncToCloud();
-        if (success) {
-            submitBtn.innerText = '✅ 云同步成功';
-            submitBtn.style.background = '#2ea043';
-        } else {
-            submitBtn.innerText = '❌ 云端保存失败';
-            submitBtn.style.background = '#d73a49';
-        }
-    } else {
-        submitBtn.innerText = '✅ 仅本地保存';
-        submitBtn.style.background = '#2ea043';
-    }
     
     // Clear textual inputs
     document.getElementById('meals').value = '';
     
     setTimeout(() => {
-        submitBtn.innerText = originalText;
+        submitBtn.innerText = '保存记录';
         submitBtn.style.background = '';
         submitBtn.disabled = false;
         navItems[1].click(); // switch to history view
         resetFormTime();
-    }, 1500);
+    }, 1000);
 });
 
-// Helper for history formatting
+// Helpers for history formatting
+function formatDateOnly(isoString) {
+    const d = new Date(isoString);
+    return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;
+}
+
+function formatTimeOnly(isoString) {
+    const d = new Date(isoString);
+    return `${d.getHours()}:${d.getMinutes().toString().padStart(2, '0')}`;
+}
+
 function formatDate(isoString) {
     const d = new Date(isoString);
     return `${d.getMonth()+1}月${d.getDate()}日 ${d.getHours()}:${d.getMinutes().toString().padStart(2, '0')}`;
@@ -234,22 +270,40 @@ function renderHistory() {
         return;
     }
 
-    historyList.innerHTML = logs.map(log => `
-        <div class="history-item">
-            <div class="history-header">
-                <span class="history-title">Bristol ${log.bristol}型 - ${log.color}</span>
-                <span>${formatDate(log.timestamp)}</span>
-            </div>
-            <div class="history-tags">
-                <span class="tag"><i class="fa-solid fa-wind"></i> ${log.smoothness}</span>
-                <span class="tag"><i class="fa-solid fa-cubes"></i> ${log.viscosity}</span>
-                <span class="tag"><i class="fa-regular fa-face-smile"></i> ${log.mood}</span>
-            </div>
-            ${log.meals ? `<div style="font-size:0.8rem; color:var(--text-muted); margin-top:5px;">饮食: ${log.meals.substring(0, 30)}${log.meals.length>30?'...':''}</div>` : ''}
-            <div class="history-actions">
-                <button class="action-btn edit-btn" onclick="editLog(${log.id})"><i class="fa-solid fa-pen"></i> 编辑</button>
-                <button class="action-btn delete-btn" onclick="deleteLog(${log.id})"><i class="fa-solid fa-trash"></i> 删除</button>
-            </div>
+    // Group logs by date
+    const grouped = {};
+    const dateKeys = [];
+    logs.forEach(log => {
+        const dateStr = formatDateOnly(log.timestamp);
+        if (!grouped[dateStr]) {
+            grouped[dateStr] = [];
+            dateKeys.push(dateStr);
+        }
+        grouped[dateStr].push(log);
+    });
+
+    historyList.innerHTML = dateKeys.map(dateStr => `
+        <div class="history-date-group">
+            <h3 class="date-header"><i class="fa-regular fa-calendar" style="margin-right:5px; margin-left:0px;"></i>${dateStr} <span style="font-size: 0.8em; color: var(--text-muted);">(${grouped[dateStr].length}次)</span></h3>
+            ${grouped[dateStr].map(log => `
+                <div class="history-item">
+                    <div class="history-header">
+                        <span class="history-title">Bristol ${log.bristol}型 - ${log.color}</span>
+                        <span>${formatTimeOnly(log.timestamp)}</span>
+                    </div>
+                    <div class="history-tags">
+                        <span class="tag"><i class="fa-solid fa-star"></i> 评分: ${log.score || 80}</span>
+                        <span class="tag"><i class="fa-solid fa-wind"></i> ${log.smoothness}</span>
+                        <span class="tag"><i class="fa-solid fa-cubes"></i> ${log.viscosity}</span>
+                        <span class="tag"><i class="fa-regular fa-face-smile"></i> ${log.mood}</span>
+                    </div>
+                    ${log.meals ? `<div style="font-size:0.8rem; color:var(--text-muted); margin-top:5px;">饮食: ${log.meals.substring(0, 30)}${log.meals.length>30?'...':''}</div>` : ''}
+                    <div class="history-actions">
+                        <button class="action-btn edit-btn" onclick="editLog(${log.id})"><i class="fa-solid fa-pen"></i> 编辑</button>
+                        <button class="action-btn delete-btn" onclick="deleteLog(${log.id})"><i class="fa-solid fa-trash"></i> 删除</button>
+                    </div>
+                </div>
+            `).join('')}
         </div>
     `).join('');
 }
@@ -260,7 +314,7 @@ window.deleteLog = function(id) {
         logs = logs.filter(l => l.id !== id);
         localStorage.setItem('poopLogs', JSON.stringify(logs));
         renderHistory();
-        syncToCloud();
+        // Since user wants to control when to sync, don't do it automatically here
     }
 };
 
@@ -271,6 +325,13 @@ window.editLog = function(id) {
     // Populate form
     editingLogId = id;
     document.getElementById('recordTime').value = log.timestamp;
+    if(log.score) {
+        document.getElementById('poopScore').value = log.score;
+        document.getElementById('scoreDisplay').innerText = log.score + '分';
+    } else {
+        document.getElementById('poopScore').value = 80;
+        document.getElementById('scoreDisplay').innerText = '80分';
+    }
     document.getElementById('bristolScale').value = log.bristol;
     document.getElementById('stoolColor').value = log.color;
     document.getElementById('smoothness').value = log.smoothness;
@@ -317,7 +378,7 @@ exportDataBtn.addEventListener('click', () => {
         <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px dashed #eee;">
             <h3 style="margin: 0 0 8px 0; color: #444; font-size: 16px;">${logs.length - i}. ${formatDate(log.timestamp)}</h3>
             <div style="font-size: 14px; line-height: 1.6;">
-                <strong><span style="color:#b8860b;">形态特征：</span></strong> Bristol ${log.bristol}型, 颜色: ${log.color}, 顺畅度: ${log.smoothness}, 粘稠度: ${log.viscosity}<br>
+                <strong><span style="color:#b8860b;">形态特征：</span></strong> Bristol ${log.bristol}型, 颜色: ${log.color}, 顺畅度: ${log.smoothness}, 粘稠度: ${log.viscosity}, 综合自评: ${log.score || 80}分<br>
                 <strong><span style="color:#4169e1;">生活状态：</span></strong> 心情: ${log.mood}, 运动: ${log.exercise}<br>
                 ${log.meals ? `<strong><span style="color:#2e8b57;">饮食：</span></strong> ${log.meals}<br>` : ''}
                 ${log.sleep ? `<strong><span style="color:#8a2be2;">睡眠：</span></strong> ${log.sleep}` : ''}
@@ -362,7 +423,7 @@ generateReportBtn.addEventListener('click', async () => {
     // Prepare data for AI (last 30 logs)
     const recentLogs = logs.slice(0, 30).map(l => ({
         time: l.timestamp,
-        stool: `Bristol ${l.bristol}型, 颜色${l.color}, 顺畅度-${l.smoothness}, 粘稠度-${l.viscosity}`,
+        stool: `Bristol ${l.bristol}型, 颜色${l.color}, 顺畅度-${l.smoothness}, 粘稠度-${l.viscosity}, 自评-${l.score || 80}分`,
         lifestyle: `饮食-${l.meals}, 心情-${l.mood}, 运动-${l.exercise}, 睡眠-${l.sleep}`
     }));
 

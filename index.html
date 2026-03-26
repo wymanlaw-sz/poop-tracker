@@ -16,9 +16,14 @@
                 <i class="fa-solid fa-poop"></i>
                 <h1>便便日记</h1>
             </div>
-            <button id="settingsBtn" class="icon-btn" title="设置 API Key">
-                <i class="fa-solid fa-gear"></i>
-            </button>
+            <div class="header-actions" style="display:flex; gap:0.5rem;">
+                <button id="syncBtn" class="icon-btn" title="手动同步到云端">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                </button>
+                <button id="settingsBtn" class="icon-btn" title="设置 API Key">
+                    <i class="fa-solid fa-gear"></i>
+                </button>
+            </div>
         </header>
 
         <!-- Main Content Area -->
@@ -37,6 +42,16 @@
                         </div>
 
                         <!-- Stool Characteristics -->
+                        <div class="form-group slider-group">
+                            <label><i class="fa-solid fa-star"></i> 综合自评 (0-100分)</label>
+                            <input type="range" id="poopScore" min="0" max="100" value="80">
+                            <div class="scale-labels">
+                                <span>很差</span>
+                                <span id="scoreDisplay" style="font-weight:bold;color:var(--primary-color);">80分</span>
+                                <span>完美</span>
+                            </div>
+                        </div>
+
                         <div class="form-group slider-group">
                             <label><i class="fa-solid fa-droplet"></i> 形状与干湿程度 (1:硬球 - 7:水状)</label>
                             <input type="range" id="bristolScale" min="1" max="7" value="4">
