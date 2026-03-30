@@ -15,7 +15,7 @@
             <section id="logView" class="view active">
                 <header class="fluent-header">
                     <div>
-                        <h1 style="font-size: 1.8rem; font-weight: 700;">便便日记</h1>
+                        <h1>便便日记</h1>
                         <p style="color: var(--text-sec); font-size: 0.85rem;">今日状态打卡</p>
                     </div>
                     <div class="header-actions">
@@ -43,23 +43,22 @@
                         </div>
                         
                         <div class="form-group">
-                            <label class="fluent-label">心情情绪</label>
-                            <div class="chip-group" data-target="mood">
-                                <button type="button" class="chip active" data-value="开心平和">开心平和</button>
-                                <button type="button" class="chip" data-value="一般般">一般般</button>
-                                <button type="button" class="chip" data-value="压力大/焦虑">压力/焦虑</button>
-                                <button type="button" class="chip" data-value="疲惫">疲惫</button>
-                            </div>
+                            <label class="fluent-label">情绪</label>
+                            <select class="fluent-input" data-target="mood">
+                                <option value="开心平和">开心平和</option>
+                                <option value="正常">正常</option>
+                                <option value="压力/焦虑">压力/焦虑</option>
+                                <option value="疲惫">疲惫</option>
+                            </select>
                         </div>
                         
                         <div class="form-group">
                             <label class="fluent-label">运动情况</label>
-                            <div class="chip-group" data-target="exercise">
-                                <button type="button" class="chip active" data-value="无运动">无运动</button>
-                                <button type="button" class="chip" data-value="轻度(散步)">轻度散步</button>
-                                <button type="button" class="chip" data-value="中度(慢跑/健身)">慢跑健身</button>
-                                <button type="button" class="chip" data-value="高强度">高强度拉练</button>
-                            </div>
+                            <select class="fluent-input" data-target="exercise">
+                                <option value="轻度">轻度</option>
+                                <option value="中度">中度</option>
+                                <option value="重度">重度</option>
+                            </select>
                         </div>
                         
                         <div class="form-group">
@@ -68,14 +67,14 @@
                         </div>
                     </div>
 
-                    <button type="submit" id="saveBtn" class="fluent-btn primary">保存并同步今日记录</button>
+                    <button type="submit" id="saveBtn" class="fluent-btn primary">提交</button>
                 </form>
             </section>
 
             <section id="historyView" class="view">
                 <header class="fluent-header">
                     <div>
-                        <h1 style="font-size: 1.8rem; font-weight: 700;">历史数据</h1>
+                        <h1>历史数据</h1>
                         <p style="color: var(--text-sec); font-size: 0.85rem;">你所有的记录详情</p>
                     </div>
                 </header>
@@ -87,14 +86,11 @@
             <section id="analysisView" class="view">
                 <header class="fluent-header">
                     <div>
-                        <h1 style="font-size: 1.8rem; font-weight: 700;">AI 分析</h1>
+                        <h1>AI 分析</h1>
                         <p style="color: var(--text-sec); font-size: 0.85rem;">全方位健康洞察</p>
                     </div>
                 </header>
                  <div class="fluent-card" style="text-align: center; padding: 2rem 1rem;">
-                    <div class="analysis-header-icon">
-                        ✨
-                    </div>
                     <h2 style="color:var(--accent);">月度趋势诊疗报告</h2>
                     <p style="color:var(--text-sec); font-size: 0.9rem; margin-bottom: 2rem;">整合您最近 30 天的肠道表现与生活习惯模式，交由大语言模型执行极速诊断。</p>
                     
@@ -103,7 +99,7 @@
                             <span class="btn-text">生成 AI 诊断</span>
                             <div class="spinner hidden"></div>
                         </button>
-                        <button id="exportDataBtn" class="fluent-btn outline" style="flex:1; margin-bottom:0; box-shadow:none;">CSV导出</button>
+                        <button id="exportDataBtn" class="fluent-btn outline" style="flex:1; margin-bottom:0; box-shadow:none;">导出 PDF</button>
                     </div>
                     
                     <div id="reportContainer" class="report-box hidden">
@@ -175,7 +171,6 @@
                     <span class="val-display score-display">80分</span>
                 </div>
                 <input type="range" class="fluent-slider poop-score" min="0" max="100" value="80">
-                <div class="scale-labels"><span>糟糕透顶 (0)</span><span>完美顺畅 (100)</span></div>
             </div>
             
             <div class="form-group">
@@ -183,38 +178,38 @@
                     <label class="fluent-label" style="margin:0;">形态 (Bristol评级)</label>
                 </div>
                 <input type="range" class="fluent-slider poop-bristol" min="1" max="7" value="4">
-                <div class="scale-labels"><span>拉水(极稀)</span><span>理想中点</span><span>干硬羊粪</span></div>
+                <div class="scale-labels"><span>拉水</span><span>理想</span><span>干硬</span></div>
             </div>
             
             <div class="form-group">
-                <label class="fluent-label">主要颜色</label>
-                <div class="chip-group" data-target="poop-color">
-                    <button type="button" class="chip active" data-value="棕色">健康棕</button>
-                    <button type="button" class="chip" data-value="浅黄">浅黄</button>
-                    <button type="button" class="chip" data-value="绿色" data-tint="绿色">泛绿</button>
-                    <button type="button" class="chip" data-value="黑色">黑漆色</button>
-                    <button type="button" class="chip" data-value="红色" data-tint="红色">红/带血</button>
-                    <button type="button" class="chip" data-value="灰白">灰极化</button>
-                </div>
+                <label class="fluent-label">颜色</label>
+                <select class="fluent-input" data-target="poop-color">
+                    <option value="棕色">棕色</option>
+                    <option value="黄色">黄色</option>
+                    <option value="绿色">绿色</option>
+                    <option value="黑色">黑色</option>
+                    <option value="带血">带血</option>
+                    <option value="灰色">灰色</option>
+                </select>
             </div>
             
             <div class="form-group">
-                <label class="fluent-label">整体顺畅度</label>
-                <div class="chip-group" data-target="poop-smoothness">
-                    <button type="button" class="chip" data-value="很顺畅">极度顺畅</button>
-                    <button type="button" class="chip active" data-value="一般">一般水平</button>
-                    <button type="button" class="chip" data-value="有些吃力">有些吃力</button>
-                    <button type="button" class="chip" data-value="便秘困难" data-tint="红色">便秘艰难</button>
-                </div>
+                <label class="fluent-label">顺畅度</label>
+                <select class="fluent-input" data-target="poop-smoothness">
+                    <option value="很顺畅">极度顺畅</option>
+                    <option value="一般">一般水平</option>
+                    <option value="有些吃力">有些吃力</option>
+                    <option value="便秘困难">便秘艰难</option>
+                </select>
             </div>
             
             <div class="form-group">
                 <label class="fluent-label">马桶粘连</label>
-                <div class="chip-group" data-target="poop-viscosity">
-                    <button type="button" class="chip active" data-value="不粘">毫不粘连</button>
-                    <button type="button" class="chip" data-value="轻微粘">轻微粘连</button>
-                    <button type="button" class="chip" data-value="很粘糊" data-tint="红色">难冲洗级巨糊</button>
-                </div>
+                <select class="fluent-input" data-target="poop-viscosity">
+                    <option value="不粘">毫不粘连</option>
+                    <option value="轻微粘">轻微粘连</option>
+                    <option value="很粘糊">难冲洗级巨糊</option>
+                </select>
             </div>
         </div>
     </template>

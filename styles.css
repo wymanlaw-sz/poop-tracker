@@ -4,9 +4,9 @@
     --bg-card: #282828; /* Elevated Card */
     --bg-chip: #333333; /* Default unselected control */
     
-    --accent: #60CDFF; /* Windows 11 Light Blue Accent */
-    --accent-dark: #005A9E; 
-    --text-on-accent: #000000;
+    --accent: #69a80f; /* Green Accent */
+    --accent-dark: #4a7a0b; 
+    --text-on-accent: #FFFFFF;
     
     --text-main: #FFFFFF;
     --text-sec:  #A0A0A0;
@@ -31,7 +31,7 @@
 }
 
 body {
-    font-family: 'Segoe UI Variable', 'Segoe UI', 'Inter', -apple-system, system-ui, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Microsoft YaHei", "微软雅黑", sans-serif;
     background-color: var(--bg-base);
     color: var(--text-main);
     line-height: 1.6;
@@ -43,17 +43,24 @@ body {
 
 /* ======= Typography ======= */
 h1 {
-    font-size: 2.25rem;
-    font-weight: 600;
+    font-size: 2.1rem;
+    font-weight: 800;
     letter-spacing: -0.5px;
-    margin-bottom: 0.2rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-main);
 }
 
 h2 {
-    font-size: 1.25rem;
+    font-size: 1.35rem;
     font-weight: 600;
     letter-spacing: -0.3px;
     margin-bottom: 0.5rem;
+    color: var(--text-main);
+}
+
+h3 {
+    font-size: 1.06rem;
+    font-weight: 600;
     color: var(--text-main);
 }
 
@@ -138,13 +145,13 @@ h2 {
 }
 
 .fluent-card-title {
-    font-size: 1rem;
+    font-size: 1.06rem;
     font-weight: 600;
     margin-bottom: 1rem;
     color: var(--text-main);
 }
 
-/* ======= Chip Groups (The core feature) ======= */
+/* ======= Form Groups ======= */
 .form-group {
     margin-bottom: 1.5rem;
 }
@@ -154,49 +161,11 @@ h2 {
 
 .fluent-label {
     display: block;
-    font-size: 0.9rem;
-    font-weight: 500;
+    font-size: 0.95rem;
+    font-weight: 400;
     color: var(--text-sec);
     margin-bottom: 0.5rem;
 }
-
-.chip-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.chip {
-    background: var(--bg-chip);
-    border: 1px solid transparent;
-    color: var(--text-main);
-    padding: 0.5rem 1rem;
-    border-radius: var(--radius-md);
-    font-size: 0.9rem;
-    font-weight: 500;
-    font-family: inherit;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.chip:hover {
-    background: rgba(255,255,255,0.1);
-}
-
-.chip:active {
-    transform: scale(var(--active-scale));
-}
-
-.chip.active {
-    background: var(--accent);
-    color: var(--text-on-accent);
-    font-weight: 600;
-    box-shadow: 0 2px 8px rgba(96, 205, 255, 0.2);
-}
-
-/* Highlight chips for specific groups (e.g. Danger red for Bad) */
-.chip[data-value="红色"].active { background: #FF99A4; color: #000; box-shadow: 0 2px 8px rgba(255, 153, 164, 0.2); }
-.chip[data-value="绿色"].active { background: #6CCB5F; color: #000; box-shadow: 0 2px 8px rgba(108, 203, 95, 0.2); }
 
 /* ======= Inputs & Sliders ======= */
 .fluent-input {
@@ -208,7 +177,8 @@ h2 {
     border-radius: var(--radius-md) var(--radius-md) 0 0;
     color: var(--text-main);
     font-family: inherit;
-    font-size: 1rem;
+    font-size: 1.06rem;
+    letter-spacing: -0.2px;
     transition: var(--transition);
     color-scheme: dark;
 }
@@ -217,6 +187,32 @@ h2 {
     outline: none;
     border-bottom-color: var(--accent);
     background: rgba(255,255,255,0.08);
+}
+
+input[type="date"].fluent-input,
+input[type="time"].fluent-input {
+    text-align: center;
+}
+
+input[type="date"].fluent-input::-webkit-datetime-edit,
+input[type="time"].fluent-input::-webkit-datetime-edit {
+    display: flex;
+    justify-content: center;
+}
+
+select.fluent-input {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23A0A0A0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1em;
+    padding-right: 2.5rem;
+}
+
+select.fluent-input option {
+    background-color: var(--bg-card);
+    color: var(--text-main);
 }
 
 textarea.fluent-input {
@@ -292,7 +288,7 @@ textarea.fluent-input:focus {
     width: 100%;
     padding: 0.85rem;
     border-radius: var(--radius-md);
-    font-size: 1rem;
+    font-size: 1.06rem;
     font-weight: 600;
     font-family: inherit;
     cursor: pointer;
@@ -441,14 +437,5 @@ textarea.fluent-input:focus {
 }
 
 /* AI */
-.analysis-header-icon {
-    width: 60px; height: 60px;
-    border-radius: 14px;
-    background: rgba(255,255,255,0.05);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.8rem; margin: 0 auto 1.5rem;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
-}
-
 .report-box { background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: var(--radius-md); margin-top:1.5rem; }
 .report-content { font-size: 0.95rem; color: var(--text-sec); }

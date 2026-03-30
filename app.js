@@ -55,7 +55,7 @@ function migrateData() {
                     date: dateStr,
                     meals: log.meals || "",
                     mood: log.mood || "开心平和",
-                    exercise: log.exercise || "无运动",
+                    exercise: log.exercise || "轻度",
                     sleep: log.sleep || "",
                     poops: []
                 };
@@ -85,38 +85,17 @@ function migrateData() {
     }
 }
 
-// Global Chip Interaction Logic (Fluent UI implementation)
-document.addEventListener('click', (e) => {
-    if (e.target.classList.contains('chip')) {
-        const group = e.target.closest('.chip-group');
-        if (group) {
-            group.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-            e.target.classList.add('active');
-        }
-    }
-});
-
-function setChipActivity(container, targetName, value) {
+function setSelectValue(container, targetName, value) {
     if (!container) return;
-    const group = container.querySelector(`.chip-group[data-target="${targetName}"]`);
-    if (!group) return;
-    const chips = group.querySelectorAll('.chip');
-    chips.forEach(c => c.classList.remove('active'));
-    let found = false;
-    if (value) {
-        chips.forEach(c => {
-            if (c.getAttribute('data-value') === value) {
-                c.classList.add('active');
-                found = true;
-            }
-        });
+    const select = container.querySelector(`select[data-target="${targetName}"]`);
+    if (select && value) {
+        select.value = value;
     }
-    if (!found && chips.length > 0) chips[0].classList.add('active');
 }
 
-function getChipValue(container, targetName) {
-    const active = container.querySelector(`.chip-group[data-target="${targetName}"] .chip.active`);
-    return active ? active.getAttribute('data-value') : '';
+function getSelectValue(container, targetName) {
+    const select = container.querySelector(`select[data-target="${targetName}"]`);
+    return select ? select.value : '';
 }
 
 
@@ -198,9 +177,9 @@ function addPoopEntry(data = null) {
         clone.querySelector('.poop-bristol').value = 8 - parseInt(data.bristol || 4);
         
         // Use new Fluent Chip system
-        setChipActivity(wrapper, 'poop-color', data.color);
-        setChipActivity(wrapper, 'poop-smoothness', data.smoothness);
-        setChipActivity(wrapper, 'poop-viscosity', data.viscosity);
+        setSelectValue(wrapper, 'poop-color', data.color);
+        setSelectValue(wrapper, 'poop-smoothness', data.smoothness);
+        setSelectValue(wrapper, 'poop-viscosity', data.viscosity);
     } else {
         const now = new Date();
         const offset = now.getTimezoneOffset() * 60000;
@@ -222,8 +201,8 @@ function loadLogForDate(dateStr) {
         document.getElementById('meals').value = existing.meals || '';
         document.getElementById('sleep').value = existing.sleep || '';
         
-        setChipActivity(formContainer, 'mood', existing.mood);
-        setChipActivity(formContainer, 'exercise', existing.exercise);
+        setSelectValue(formContainer, 'mood', existing.mood);
+        setSelectValue(formContainer, 'exercise', existing.exercise || '轻度');
 
         if (existing.poops && existing.poops.length > 0) {
             existing.poops.forEach(p => addPoopEntry(p));
@@ -234,11 +213,11 @@ function loadLogForDate(dateStr) {
         editingLogId = null;
         document.getElementById('meals').value = '';
         document.getElementById('sleep').value = '';
-        setChipActivity(formContainer, 'mood', '开心平和');
-        setChipActivity(formContainer, 'exercise', '无运动');
+        setSelectValue(formContainer, 'mood', '开心平和');
+        setSelectValue(formContainer, 'exercise', '轻度');
         addPoopEntry(); // Load one blank poop entry
     }
-    submitBtn.innerText = '保存并同步今日记录';
+    submitBtn.innerText = '提交';
 }
 
 function resetFormDate() {
@@ -305,7 +284,7 @@ if (syncBtn) {
         const success = await syncToCloud();
 
         if (success) {
-            syncBtn.innerHTML = '<i class="fa-solid fa-check" style="color: #6CCB5F;"></i>';
+            syncBtn.innerHTML = '<i class="fa-solid fa-check" style="color: #69a80f;"></i>';
             setTimeout(() => { syncBtn.innerHTML = originalHtml; syncBtn.disabled = false; }, 2000);
         } else {
             syncBtn.innerHTML = '<i class="fa-solid fa-xmark" style="color: #FF99A4;"></i>';
@@ -327,9 +306,9 @@ form.addEventListener('submit', async (e) => {
             time: node.querySelector('.poop-time').value,
             score: node.querySelector('.poop-score').value,
             bristol: String(8 - parseInt(node.querySelector('.poop-bristol').value)),
-            color: getChipValue(node, 'poop-color'),
-            smoothness: getChipValue(node, 'poop-smoothness'),
-            viscosity: getChipValue(node, 'poop-viscosity')
+            color: getSelectValue(node, 'poop-color'),
+            smoothness: getSelectValue(node, 'poop-smoothness'),
+            viscosity: getSelectValue(node, 'poop-viscosity')
         });
     });
 
@@ -340,8 +319,8 @@ form.addEventListener('submit', async (e) => {
         id: dateVal,
         date: dateVal,
         meals: document.getElementById('meals').value,
-        mood: getChipValue(document.getElementById('trackerForm'), 'mood'),
-        exercise: getChipValue(document.getElementById('trackerForm'), 'exercise'),
+        mood: getSelectValue(document.getElementById('trackerForm'), 'mood'),
+        exercise: getSelectValue(document.getElementById('trackerForm'), 'exercise'),
         sleep: document.getElementById('sleep').value,
         poops: poops
     };
@@ -353,25 +332,25 @@ form.addEventListener('submit', async (e) => {
     logs.sort((a, b) => new Date(b.date) - new Date(a.date));
     localStorage.setItem('poopLogs', JSON.stringify(logs));
 
-    submitBtn.innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:2px;border-top-color:#000;"></div> 保存并上传云端...';
+    submitBtn.innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:2px;border-top-color:#000;"></div> 提交中...';
     submitBtn.disabled = true;
 
     if (binId && binKey) {
         const success = await syncToCloud();
         if (success) {
-            submitBtn.innerText = '✅ 同步成功';
-            submitBtn.style.background = '#6CCB5F';
+            submitBtn.innerText = '✅ 提交成功';
+            submitBtn.style.background = '#69a80f';
         } else {
             submitBtn.innerText = '⚠️ 本地保存(同步失败)';
             submitBtn.style.background = '#FF9F0A';
         }
     } else {
-        submitBtn.innerText = '✅ 已保存到本地';
-        submitBtn.style.background = '#6CCB5F';
+        submitBtn.innerText = '✅ 提交成功';
+        submitBtn.style.background = '#69a80f';
     }
 
     setTimeout(() => {
-        submitBtn.innerText = '保存并同步今日记录';
+        submitBtn.innerText = '提交';
         submitBtn.style.background = '';
         submitBtn.disabled = false;
         navItems[1].click(); // switch to history view
