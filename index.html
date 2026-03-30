@@ -2,115 +2,128 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Poop Tracker | 便便日记</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
     <div class="app-container">
-        <header class="glass-header">
-            <div class="logo">
-                <i class="fa-solid fa-poop"></i>
-                <h1>便便日记</h1>
-            </div>
-            <div class="header-actions" style="display:flex; gap:0.5rem;">
-                <button id="syncBtn" class="icon-btn" title="手动同步到云端">
-                    <i class="fa-solid fa-cloud-arrow-up"></i>
-                </button>
-                <button id="settingsBtn" class="icon-btn" title="设置 API Key">
-                    <i class="fa-solid fa-gear"></i>
-                </button>
-            </div>
-        </header>
-
+        
         <main class="content-area">
             <section id="logView" class="view active">
-                <div class="card form-card">
-                    <h2 class="section-title">每日记录</h2>
-                    <form id="trackerForm">
-                        <div class="form-group">
-                            <label for="recordDate"><i class="fa-regular fa-calendar"></i> 记录日期</label>
+                <header class="ios-header">
+                    <h1 class="large-title">便便日记</h1>
+                    <div class="header-actions">
+                        <button id="syncBtn" class="icon-btn" title="手动同步"><i class="fa-solid fa-cloud-arrow-up"></i></button>
+                        <button id="settingsBtn" class="icon-btn" title="设置"><i class="fa-solid fa-gear"></i></button>
+                    </div>
+                </header>
+                <form id="trackerForm">
+                    <h2 class="section-header">基础信息</h2>
+                    <ul class="inset-grouped-list">
+                        <li class="list-item">
+                            <label for="recordDate">
+                                <i class="fa-regular fa-calendar-days" style="color:var(--sys-blue); width:24px; text-align:center; margin-right:4px;"></i>
+                                <span>记录日期</span>
+                            </label>
                             <input type="date" id="recordDate" required>
-                        </div>
+                        </li>
+                    </ul>
 
-                        <div id="poopsContainer"></div>
-                        
-                        <button type="button" id="addPoopBtn" class="outline-btn"><i class="fa-solid fa-plus"></i> 追加当日排便记录</button>
+                    <div id="poopsContainer"></div>
+                    
+                    <button type="button" id="addPoopBtn" class="ios-btn outline-btn"><i class="fa-solid fa-plus"></i> 追加排便记录</button>
 
-                        <div class="divider"><span>当日生活与作息评估</span></div>
+                    <h2 class="section-header">生活与作息评估</h2>
+                    <ul class="inset-grouped-list">
+                        <li class="list-item textarea-item">
+                            <label for="meals">
+                                <i class="fa-solid fa-utensils" style="color:var(--sys-orange); width:24px; text-align:center; margin-right:4px;"></i>
+                                <span>三餐饮食记录</span>
+                            </label>
+                            <textarea id="meals" placeholder="例如：早餐麦片，午餐外卖炸鸡..." rows="2"></textarea>
+                        </li>
+                        <li class="list-item">
+                            <label for="mood">
+                                <i class="fa-regular fa-face-smile" style="color:var(--sys-yellow); width:24px; text-align:center; margin-right:4px;"></i>
+                                <span>心情</span>
+                            </label>
+                            <select id="mood">
+                                <option value="开心平和">开心 😊</option>
+                                <option value="一般般">一般 😐</option>
+                                <option value="压力大/焦虑">焦虑 😰</option>
+                                <option value="疲惫">疲惫 😫</option>
+                            </select>
+                        </li>
+                        <li class="list-item">
+                            <label for="exercise">
+                                <i class="fa-solid fa-person-running" style="color:var(--sys-green); width:24px; text-align:center; margin-right:4px;"></i>
+                                <span>运动</span>
+                            </label>
+                            <select id="exercise">
+                                <option value="无运动">无</option>
+                                <option value="轻度(散步)">轻度</option>
+                                <option value="中度(慢跑/健身)">中度</option>
+                                <option value="高强度">高强度</option>
+                            </select>
+                        </li>
+                        <li class="list-item">
+                            <label for="sleep">
+                                <i class="fa-solid fa-bed" style="color:var(--sys-purple); width:24px; text-align:center; margin-right:4px;"></i>
+                                <span>昨晚睡眠</span>
+                            </label>
+                            <input type="text" id="sleep" placeholder="例如：12睡8起">
+                        </li>
+                    </ul>
 
-                        <div class="form-group">
-                            <label for="meals"><i class="fa-solid fa-utensils"></i> 三餐吃了什么？</label>
-                            <textarea id="meals" placeholder="例如：早餐麦片，午餐外卖炸鸡，晚餐轻食沙拉，喝了多少水..." rows="2"></textarea>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group half">
-                                <label for="mood"><i class="fa-regular fa-face-smile"></i> 心情</label>
-                                <select id="mood">
-                                    <option value="开心平和">开心平和 😊</option>
-                                    <option value="一般般">一般般 😐</option>
-                                    <option value="压力大/焦虑">压力大/焦虑 😰</option>
-                                    <option value="疲惫">疲惫 😫</option>
-                                </select>
-                            </div>
-                            <div class="form-group half">
-                                <label for="exercise"><i class="fa-solid fa-person-running"></i> 运动</label>
-                                <select id="exercise">
-                                    <option value="无运动">无运动</option>
-                                    <option value="轻度(散步)">轻度 (散步)</option>
-                                    <option value="中度(慢跑/健身)">中度 (慢跑)</option>
-                                    <option value="高强度">高强度运动</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="sleep"><i class="fa-solid fa-bed"></i> 昨晚作息睡眠</label>
-                            <input type="text" id="sleep" placeholder="例如：12点睡，8点起，睡得不错">
-                        </div>
-
-                        <button type="submit" id="saveBtn" class="primary-btn pulse-btn">保存今日完整记录</button>
-                    </form>
-                </div>
+                    <button type="submit" id="saveBtn" class="ios-btn primary-btn">保存今日完整记录</button>
+                </form>
             </section>
 
             <section id="historyView" class="view">
-                <div class="card">
-                    <h2 class="section-title">历史记录</h2>
-                    <div id="historyList" class="history-container">
-                        <div class="empty-state">暂无记录，快去记一笔吧！</div>
-                    </div>
+                <header class="ios-header">
+                   <h1 class="large-title">历史记录</h1>
+                </header>
+                <div id="historyList" class="history-container" style="padding-top:1rem;">
+                    <div class="empty-state">暂无记录，快去记一笔吧！</div>
                 </div>
             </section>
 
             <section id="analysisView" class="view">
-                <div class="card analysis-card">
-                    <h2 class="section-title"><i class="fa-solid fa-wand-magic-sparkles gradient-text"></i> AI 健康分析 & 数据</h2>
-                    <p class="analysis-desc">基于您最近 30 天的记录，AI将为您生成专属的肠道健康与生活方式分析报告。</p>
+                 <header class="ios-header">
+                   <h1 class="large-title">健康分析</h1>
+                 </header>
+                 <div class="analysis-card">
+                    <div style="width:64px; height:64px; border-radius:18px; font-size:2rem; margin:0 auto 1.5rem; display:flex; justify-content:center; align-items:center;">
+                        <i class="fa-solid fa-wand-magic-sparkles" style="color:var(--sys-purple);"></i>
+                    </div>
+                    <h2 class="gradient-text">基于AI深度分析</h2>
+                    <p class="analysis-desc">整合您最近 30 天的肠道表现与生活习惯模式。</p>
+                    
                     <div class="action-row">
-                        <button id="generateReportBtn" class="ai-btn" style="flex: 2;">
-                            <span class="btn-text">生成 AI 分析报告</span>
+                        <button id="generateReportBtn" class="ios-btn ai-btn" style="flex: 2;">
+                            <span class="btn-text">生成 AI 诊断报告</span>
                             <div class="spinner hidden"></div>
                         </button>
-                        <button id="exportDataBtn" class="primary-btn mt-0" style="flex: 1; min-width: 80px; padding: 1rem 0.5rem; font-size: 0.95rem;">
-                            导出数据
+                        <button id="exportDataBtn" class="ios-btn" style="flex: 1; background:var(--card-bg-elevated); color:var(--text-main);">
+                            PDF导出
                         </button>
                     </div>
+                    
                     <div id="reportContainer" class="report-box hidden">
                         <div class="report-header">
-                            <h3>诊断报告</h3>
-                            <span class="report-date" id="reportDate"></span>
+                            <h3 style="font-size:1.1rem; color:var(--text-main);">诊断结果</h3>
+                            <span class="report-date" id="reportDate" style="color:var(--text-muted); font-size:0.8rem;"></span>
                         </div>
                         <div id="reportContent" class="report-content"></div>
                     </div>
-                </div>
+                 </div>
             </section>
         </main>
 
-        <nav class="bottom-nav glass-nav">
+        <nav class="bottom-nav">
             <button class="nav-item active" data-target="logView">
                 <i class="fa-solid fa-pen-to-square"></i>
                 <span>记录</span>
@@ -120,87 +133,113 @@
                 <span>历史</span>
             </button>
             <button class="nav-item ai-tab" data-target="analysisView">
-                <div class="ai-icon-bg"><i class="fa-solid fa-robot"></i></div>
-                <span>AI分析</span>
+                <i class="fa-solid fa-robot"></i>
+                <span>分析</span>
             </button>
         </nav>
-
+        
         <div id="settingsModal" class="modal hidden">
-            <div class="modal-content glass-modal">
+            <div class="glass-modal">
                 <div class="modal-header">
-                    <h3>设置</h3>
-                    <button id="closeSettings" class="icon-btn"><i class="fa-solid fa-xmark"></i></button>
+                    <h3>系统设置</h3>
+                    <button id="closeSettings" class="icon-btn" style="width:30px;height:30px;font-size:1rem;"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label for="apiKey">Kimi API Key</label>
-                        <p class="hint">API Key 仅保存在您的浏览器本地，默认已为您填入提供的Key。</p>
-                        <input type="password" id="apiKey" placeholder="sk-...">
-                    </div>
-                    <div class="divider"><span>数据云同步设置 (推荐使用 GitHub Gist)</span></div>
-                    <div class="form-group">
-                        <label for="binId">Gist ID & GitHub Token (可选)</label>
-                        <p class="hint">填写 GitHub Gist ID 和具备 gist 权限的 Token (PAT) 以开启永久稳定的云同步。</p>
-                        <input type="text" id="binId" placeholder="Gist ID (例如: 8a9b...)" style="margin-bottom: 8px;">
-                        <input type="password" id="binKey" placeholder="GitHub Token (例如: ghp_...)">
-                    </div>
-                    <button id="saveSettingsBtn" class="primary-btn">保存</button>
+                    <ul class="inset-grouped-list">
+                        <li class="list-item textarea-item">
+                            <label><i class="fa-solid fa-key" style="color:var(--sys-blue); width:24px; text-align:center;"></i> API Key (Kimi)</label>
+                            <input type="password" id="apiKey" style="width:100%; text-align:left; margin-top:8px;" placeholder="sk-...">
+                        </li>
+                    </ul>
+                    
+                    <div class="hint">GitHub 数据双向同步 (推荐)</div>
+                    <ul class="inset-grouped-list">
+                        <li class="list-item">
+                            <label>Gist ID</label>
+                            <input type="text" id="binId" placeholder="例如: 8a9b...">
+                        </li>
+                        <li class="list-item">
+                            <label>Token</label>
+                            <input type="password" id="binKey" placeholder="默认已免配">
+                        </li>
+                    </ul>
+                    <button id="saveSettingsBtn" class="ios-btn primary-btn" style="margin-top:0;">保存设置</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- The Template for poop entries -->
     <template id="poopEntryTemplate">
-        <div class="poop-entry-card" style="margin-bottom: 20px; padding: 15px; border: 1px dashed var(--primary-color); border-radius: 8px; position: relative; background: rgba(0,0,0,0.1);">
-            <button type="button" class="remove-poop-btn" style="position: absolute; top: 10px; right: 10px; background: transparent; border: none; font-size: 1.2rem; cursor: pointer; color: var(--danger);"><i class="fa-solid fa-xmark"></i></button>
-            <div class="form-group">
-                <label><i class="fa-regular fa-clock"></i> 排便时间</label>
-                <input type="time" class="poop-time" required>
-            </div>
-            <div class="form-group slider-group">
-                <label><i class="fa-solid fa-star"></i> 综合自评 (0-100分)</label>
-                <input type="range" class="poop-score" min="0" max="100" value="80">
-                <div class="scale-labels">
-                    <span>很差</span>
-                    <span class="score-display" style="font-weight:bold;color:var(--primary-color);">80分</span>
-                    <span>完美</span>
-                </div>
-            </div>
-            <div class="form-group slider-group">
-                <label><i class="fa-solid fa-droplet"></i> 形状与干湿程度 (左:稀水 - 右:干硬)</label>
-                <input type="range" class="poop-bristol" min="1" max="7" value="4">
-                <div class="scale-labels"><span>稀水</span><span>理想</span><span>干硬</span></div>
-            </div>
-            <div class="form-group">
-                <label><i class="fa-solid fa-palette"></i> 颜色</label>
-                <select class="poop-color">
-                    <option value="棕色" selected>棕色 (健康)</option>
-                    <option value="浅黄">浅黄/金黄</option>
-                    <option value="绿色">绿色</option>
-                    <option value="黑色">黑色</option>
-                    <option value="红色">红色/带血</option>
-                    <option value="灰白">灰白色</option>
-                </select>
-            </div>
-            <div class="form-row">
-                <div class="form-group half">
-                    <label><i class="fa-solid fa-wind"></i> 顺畅度</label>
+        <div class="poop-entry-card">
+            <button type="button" class="remove-poop-btn"><i class="fa-solid fa-minus"></i></button>
+            <h2 class="section-header">排便详情信息</h2>
+            <ul class="inset-grouped-list">
+                <li class="list-item">
+                    <label>
+                        <i class="fa-regular fa-clock" style="color:var(--sys-gray); width:24px; text-align:center; margin-right:4px;"></i>
+                        <span>排便时间</span>
+                    </label>
+                    <input type="time" class="poop-time" required>
+                </li>
+                
+                <li class="list-item" style="flex-direction:column; align-items:stretch; padding:1rem;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:1rem; align-items:center;">
+                        <label style="margin:0;"><i class="fa-regular fa-star" style="color:var(--sys-blue); width:24px; text-align:center; margin-right:4px;"></i><span>综合自评</span></label>
+                        <span class="score-display">80分</span>
+                    </div>
+                    <input type="range" class="fluid-slider blue-fill poop-score" min="0" max="100" value="80">
+                    <div class="scale-labels" style="margin-top:0.75rem;"><span>糟糕透顶</span><span>完美畅通</span></div>
+                </li>
+                
+                <li class="list-item" style="flex-direction:column; align-items:stretch; padding:1rem;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:1rem; align-items:center;">
+                        <label style="margin:0;"><i class="fa-solid fa-droplet" style="color:var(--sys-green); width:24px; text-align:center; margin-right:4px;"></i><span>便便形状 (干湿)</span></label>
+                    </div>
+                    <input type="range" class="fluid-slider green-fill poop-bristol" min="1" max="7" value="4">
+                    <div class="scale-labels" style="margin-top:0.75rem;"><span>拉水极稀</span><span>理想</span><span>干硬羊粪</span></div>
+                </li>
+                
+                <li class="list-item">
+                    <label>
+                        <i class="fa-solid fa-palette" style="color:var(--sys-orange); width:24px; text-align:center; margin-right:4px;"></i>
+                        <span>颜色</span>
+                    </label>
+                    <select class="poop-color">
+                        <option value="棕色" selected>健康棕</option>
+                        <option value="浅黄">浅黄金</option>
+                        <option value="绿色">泛绿色</option>
+                        <option value="黑色">黑漆色</option>
+                        <option value="红色">红/带血</option>
+                        <option value="灰白">灰白色</option>
+                    </select>
+                </li>
+                
+                <li class="list-item">
+                    <label>
+                        <i class="fa-solid fa-wind" style="color:var(--sys-purple); width:24px; text-align:center; margin-right:4px;"></i>
+                        <span>顺畅度</span>
+                    </label>
                     <select class="poop-smoothness">
-                        <option value="很顺畅">很顺畅</option>
+                        <option value="很顺畅">极顺畅</option>
                         <option value="一般" selected>一般</option>
-                        <option value="有些吃力">有些吃力</option>
-                        <option value="便秘困难">便秘困难</option>
+                        <option value="有些吃力">吃力</option>
+                        <option value="便秘困难">便秘艰难</option>
                     </select>
-                </div>
-                <div class="form-group half">
-                    <label><i class="fa-solid fa-cubes"></i> 粘稠度/挂壁</label>
+                </li>
+                
+                <li class="list-item">
+                    <label>
+                        <i class="fa-solid fa-cubes" style="color:var(--sys-red); width:24px; text-align:center; margin-right:4px;"></i>
+                        <span>粘黏马桶</span>
+                    </label>
                     <select class="poop-viscosity">
-                        <option value="不粘" selected>不粘马桶</option>
-                        <option value="轻微粘">轻微粘落</option>
-                        <option value="很粘糊">很粘糊/难冲</option>
+                        <option value="不粘" selected>不粘</option>
+                        <option value="轻微粘">轻微粘</option>
+                        <option value="很粘糊">难冲洗</option>
                     </select>
-                </div>
-            </div>
+                </li>
+            </ul>
         </div>
     </template>
 

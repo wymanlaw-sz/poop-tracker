@@ -40,14 +40,14 @@ function migrateData() {
     let migratedLogs = [];
     let grouped = {};
     let needsMigration = false;
-    
+
     logs.forEach(log => {
-        if (log.timestamp && !log.date) { 
+        if (log.timestamp && !log.date) {
             needsMigration = true;
             const d = new Date(log.timestamp);
             const offset = d.getTimezoneOffset() * 60000;
             const dateStr = (new Date(d - offset)).toISOString().split('T')[0];
-            const timeStr = (new Date(d - offset)).toISOString().slice(11,16);
+            const timeStr = (new Date(d - offset)).toISOString().slice(11, 16);
 
             if (!grouped[dateStr]) {
                 grouped[dateStr] = {
@@ -63,7 +63,7 @@ function migrateData() {
                 if (log.meals && !grouped[dateStr].meals) grouped[dateStr].meals = log.meals;
                 if (log.sleep && !grouped[dateStr].sleep) grouped[dateStr].sleep = log.sleep;
             }
-            
+
             grouped[dateStr].poops.push({
                 time: timeStr,
                 score: log.score || 80,
@@ -76,10 +76,10 @@ function migrateData() {
             migratedLogs.push(log);
         }
     });
-    
+
     if (needsMigration) {
         Object.values(grouped).forEach(g => migratedLogs.push(g));
-        migratedLogs.sort((a,b) => new Date(b.date) - new Date(a.date));
+        migratedLogs.sort((a, b) => new Date(b.date) - new Date(a.date));
         logs = migratedLogs;
         localStorage.setItem('poopLogs', JSON.stringify(logs));
     }
@@ -144,21 +144,23 @@ document.addEventListener('DOMContentLoaded', () => {
 function addPoopEntry(data = null) {
     const clone = poopEntryTemplate.content.cloneNode(true);
     const wrapper = clone.querySelector('.poop-entry-card');
-    
+
     // Add remove logic
     clone.querySelector('.remove-poop-btn').addEventListener('click', () => wrapper.remove());
 
-    // Score listener
+    // Score listener and slider styling
     const scoreInput = clone.querySelector('.poop-score');
     const scoreDisplay = clone.querySelector('.score-display');
-    scoreInput.addEventListener('input', (e) => {
-        scoreDisplay.innerText = e.target.value + '分';
-    });
+    const updateScoreGradient = (val) => {
+        scoreDisplay.innerText = val + '分';
+        // the default box-shadow handles the fill correctly for green-fill and blue-fill
+    };
+    scoreInput.addEventListener('input', (e) => updateScoreGradient(e.target.value));
 
     if (data) {
         clone.querySelector('.poop-time').value = data.time;
         scoreInput.value = data.score;
-        scoreDisplay.innerText = data.score + '分';
+        updateScoreGradient(data.score);
         clone.querySelector('.poop-bristol').value = 8 - parseInt(data.bristol || 4);
         clone.querySelector('.poop-color').value = data.color;
         clone.querySelector('.poop-smoothness').value = data.smoothness;
@@ -166,9 +168,9 @@ function addPoopEntry(data = null) {
     } else {
         const now = new Date();
         const offset = now.getTimezoneOffset() * 60000;
-        clone.querySelector('.poop-time').value = (new Date(now - offset)).toISOString().slice(11,16);
+        clone.querySelector('.poop-time').value = (new Date(now - offset)).toISOString().slice(11, 16);
     }
-    
+
     poopsContainer.appendChild(clone);
 }
 
@@ -177,14 +179,14 @@ addPoopBtn.addEventListener('click', () => addPoopEntry());
 function loadLogForDate(dateStr) {
     poopsContainer.innerHTML = '';
     const existing = logs.find(l => l.date === dateStr);
-    
+
     if (existing) {
         editingLogId = existing.id || existing.date;
         document.getElementById('meals').value = existing.meals || '';
         document.getElementById('mood').value = existing.mood || '开心平和';
         document.getElementById('exercise').value = existing.exercise || '无运动';
         document.getElementById('sleep').value = existing.sleep || '';
-        
+
         if (existing.poops && existing.poops.length > 0) {
             existing.poops.forEach(p => addPoopEntry(p));
         } else {
@@ -250,7 +252,7 @@ settingsModal.addEventListener('click', (e) => {
 });
 
 // Sync Btn
-if(syncBtn) {
+if (syncBtn) {
     syncBtn.addEventListener('click', async () => {
         if (!binId || !binKey) {
             alert("请先在设置中配置 GitHub Gist ID 和 Token。");
@@ -260,7 +262,7 @@ if(syncBtn) {
         syncBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
         syncBtn.disabled = true;
         const success = await syncToCloud();
-        
+
         if (success) {
             syncBtn.innerHTML = '<i class="fa-solid fa-check" style="color: #2ea043;"></i>';
             setTimeout(() => { syncBtn.innerHTML = originalHtml; syncBtn.disabled = false; }, 2000);
@@ -278,7 +280,7 @@ form.addEventListener('submit', async (e) => {
     const dateVal = recordDateInput.value;
     const poopsNodes = poopsContainer.querySelectorAll('.poop-entry-card');
     const poops = [];
-    
+
     poopsNodes.forEach(node => {
         poops.push({
             time: node.querySelector('.poop-time').value,
@@ -291,7 +293,7 @@ form.addEventListener('submit', async (e) => {
     });
 
     // Sort poops by time (oldest to newest)
-    poops.sort((a,b) => a.time.localeCompare(b.time));
+    poops.sort((a, b) => a.time.localeCompare(b.time));
 
     const dailyLog = {
         id: dateVal,
@@ -307,12 +309,12 @@ form.addEventListener('submit', async (e) => {
     if (index > -1) logs[index] = dailyLog;
     else logs.unshift(dailyLog);
 
-    logs.sort((a,b) => new Date(b.date) - new Date(a.date));
+    logs.sort((a, b) => new Date(b.date) - new Date(a.date));
     localStorage.setItem('poopLogs', JSON.stringify(logs));
-    
+
     submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 保存并上传云端...';
     submitBtn.disabled = true;
-    
+
     if (binId && binKey) {
         const success = await syncToCloud();
         if (success) {
@@ -326,7 +328,7 @@ form.addEventListener('submit', async (e) => {
         submitBtn.innerText = '✅ 已保存到本地';
         submitBtn.style.background = '#2ea043';
     }
-    
+
     setTimeout(() => {
         submitBtn.innerText = '保存今日完整记录';
         submitBtn.style.background = '';
@@ -343,34 +345,34 @@ function renderHistory() {
     }
 
     historyList.innerHTML = logs.map(log => `
-        <div class="history-item" style="padding:0; border:1px solid var(--glass-border); border-left:none;">
-            <div style="background:rgba(0,0,0,0.3); padding:0.8rem 1rem; display:flex; justify-content:space-between; align-items:center; border-left:4px solid var(--primary-color); border-top-left-radius:var(--border-radius-sm); border-bottom-left-radius:0;">
-                <span style="font-weight:bold; font-size:1rem;">${log.date} <span style="font-weight:normal; font-size:0.8rem; color:var(--text-muted); margin-left:10px;">共排便 ${log.poops.length} 次</span></span>
-                <div class="history-actions" style="margin-top:0;">
+        <div class="history-item">
+            <div class="history-header">
+                <div class="history-date">${log.date} <span>共排便 ${log.poops.length} 次</span></div>
+                <div class="history-actions">
                     <button class="action-btn edit-btn" onclick="editLog('${log.date}')"><i class="fa-solid fa-pen"></i></button>
                     <button class="action-btn delete-btn" onclick="deleteLog('${log.date}')"><i class="fa-solid fa-trash"></i></button>
                 </div>
             </div>
             
-            <div style="padding:1rem;">
-                <div style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:1rem;">
-                    <span class="tag"><i class="fa-regular fa-face-smile"></i> ${log.mood}</span>
-                    <span class="tag"><i class="fa-solid fa-person-running"></i> ${log.exercise}</span>
-                    ${log.sleep ? `<span class="tag"><i class="fa-solid fa-bed"></i> 睡眠: ${log.sleep}</span>` : ''}
+            <div class="history-content">
+                <div class="history-tags">
+                    <span class="tag"><i class="fa-regular fa-face-smile" style="color:var(--sys-yellow);"></i> ${log.mood}</span>
+                    <span class="tag"><i class="fa-solid fa-person-running" style="color:var(--sys-green);"></i> ${log.exercise}</span>
+                    ${log.sleep ? `<span class="tag"><i class="fa-solid fa-bed" style="color:var(--sys-purple);"></i> 睡眠: ${log.sleep}</span>` : ''}
                 </div>
-                ${log.meals ? `<div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:1rem; border-left:2px solid var(--glass-border); padding-left:10px;">饮食: ${log.meals}</div>` : ''}
+                ${log.meals ? `<div class="history-diet">饮食: ${log.meals}</div>` : ''}
                 
                 <div style="display:flex; flex-direction:column; gap:0.5rem;">
                     ${log.poops.map(p => `
-                        <div style="background: rgba(255,255,255,0.05); padding: 0.8rem; border-radius: 6px; border: 1px solid var(--glass-border);">
-                            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                                <strong style="color:var(--text-main); font-size:0.95rem;">Bristol ${p.bristol}型 - ${p.color}</strong>
-                                <span style="font-size:0.85rem; color:var(--text-muted);"><i class="fa-regular fa-clock"></i> ${p.time}</span>
+                        <div class="poop-record-card">
+                            <div class="poop-record-header">
+                                <span style="color:var(--text-main);">Bristol ${p.bristol}型, ${p.color}色</span>
+                                <span style="color:var(--text-muted); font-size: 0.8rem;"><i class="fa-regular fa-clock"></i> ${p.time}</span>
                             </div>
-                            <div class="history-tags">
-                                <span class="tag" style="background:rgba(255,255,255,0.05)"><i class="fa-solid fa-star" style="color:#e5c07b;"></i> ${p.score}分</span>
-                                <span class="tag" style="background:rgba(255,255,255,0.05)"><i class="fa-solid fa-wind"></i> ${p.smoothness}</span>
-                                <span class="tag" style="background:rgba(255,255,255,0.05)"><i class="fa-solid fa-cubes"></i> ${p.viscosity}</span>
+                            <div class="history-tags" style="margin-bottom:0; gap: 0.4rem;">
+                                <span class="tag" style="background:var(--card-bg)"><i class="fa-solid fa-star" style="color:var(--sys-blue);"></i> ${p.score}分</span>
+                                <span class="tag" style="background:var(--card-bg)"><i class="fa-solid fa-wind" style="color:var(--sys-purple);"></i> ${p.smoothness}</span>
+                                <span class="tag" style="background:var(--card-bg)"><i class="fa-solid fa-cubes" style="color:var(--sys-red);"></i> ${p.viscosity}</span>
                             </div>
                         </div>
                     `).join('')}
@@ -380,7 +382,7 @@ function renderHistory() {
     `).join('');
 }
 
-window.deleteLog = function(dateStr) {
+window.deleteLog = function (dateStr) {
     if (confirm(`确定要删除 ${dateStr} 这一天的所有记录吗？`)) {
         logs = logs.filter(l => l.date !== dateStr);
         localStorage.setItem('poopLogs', JSON.stringify(logs));
@@ -388,7 +390,7 @@ window.deleteLog = function(dateStr) {
     }
 };
 
-window.editLog = function(dateStr) {
+window.editLog = function (dateStr) {
     loadLogForDate(dateStr);
     recordDateInput.value = dateStr;
     navItems[0].click(); // Goto log tab
@@ -404,7 +406,7 @@ exportDataBtn.addEventListener('click', () => {
     const container = document.createElement('div');
     container.style.padding = '20px 40px';
     container.style.fontFamily = "'Inter', sans-serif";
-    container.style.color = '#333'; 
+    container.style.color = '#333';
     container.style.background = '#fff';
 
     let htmlContent = `<h1 style="text-align:center; color:#238636; border-bottom: 2px solid #238636; padding-bottom: 10px;">便便日记记录报告</h1>
@@ -428,9 +430,9 @@ exportDataBtn.addEventListener('click', () => {
     container.innerHTML = htmlContent;
 
     html2pdf().set({
-      margin: 10, filename: `poop_tracker_export_${new Date().toISOString().slice(0, 10)}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        margin: 10, filename: `poop_tracker_export_${new Date().toISOString().slice(0, 10)}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     }).from(container).save().finally(() => {
         exportDataBtn.innerHTML = originalText;
         exportDataBtn.disabled = false;
@@ -461,11 +463,11 @@ generateReportBtn.addEventListener('click', async () => {
     try {
         const response = await fetch('https://api.moonshot.cn/v1/chat/completions', {
             method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-            body: JSON.stringify({ model: "moonshot-v1-8k", messages: [ { role: "system", content: "你是一位专业的肠胃健康和营养学AI助手。" }, { role: "user", content: promptText } ], temperature: 0.7 })
+            body: JSON.stringify({ model: "moonshot-v1-8k", messages: [{ role: "system", content: "你是一位专业的肠胃健康和营养学AI助手。" }, { role: "user", content: promptText }], temperature: 0.7 })
         });
         const data = await response.json();
         if (data.error) throw new Error(data.error.message);
-        
+
         document.getElementById('reportDate').innerText = (new Date()).toLocaleDateString();
         reportContent.innerHTML = marked.parse(data.choices[0].message.content);
         reportContainer.classList.remove('hidden');
