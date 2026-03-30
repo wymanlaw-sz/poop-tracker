@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Poop Tracker | 便便日记</title>
+    <title>Poop Tracker | 微软 Fluent版</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
@@ -13,111 +13,105 @@
         
         <main class="content-area">
             <section id="logView" class="view active">
-                <header class="ios-header">
-                    <h1 class="large-title">便便日记</h1>
+                <header class="fluent-header">
+                    <div>
+                        <h1 style="font-size: 1.8rem; font-weight: 700;">便便日记</h1>
+                        <p style="color: var(--text-sec); font-size: 0.85rem;">今日状态打卡</p>
+                    </div>
                     <div class="header-actions">
                         <button id="syncBtn" class="icon-btn" title="手动同步"><i class="fa-solid fa-cloud-arrow-up"></i></button>
                         <button id="settingsBtn" class="icon-btn" title="设置"><i class="fa-solid fa-gear"></i></button>
                     </div>
                 </header>
+                
                 <form id="trackerForm">
-                    <h2 class="section-header">基础信息</h2>
-                    <ul class="inset-grouped-list">
-                        <li class="list-item">
-                            <label for="recordDate">
-                                <i class="fa-regular fa-calendar-days" style="color:var(--sys-blue); width:24px; text-align:center; margin-right:4px;"></i>
-                                <span>记录日期</span>
-                            </label>
-                            <input type="date" id="recordDate" required>
-                        </li>
-                    </ul>
+                    <div class="fluent-card">
+                        <label for="recordDate" class="fluent-label">记录日期</label>
+                        <input type="date" id="recordDate" class="fluent-input" required>
+                    </div>
 
                     <div id="poopsContainer"></div>
                     
-                    <button type="button" id="addPoopBtn" class="ios-btn outline-btn"><i class="fa-solid fa-plus"></i> 追加排便记录</button>
+                    <button type="button" id="addPoopBtn" class="fluent-btn outline"><i class="fa-solid fa-plus"></i> 追加一次排便信息</button>
 
-                    <h2 class="section-header">生活与作息评估</h2>
-                    <ul class="inset-grouped-list">
-                        <li class="list-item textarea-item">
-                            <label for="meals">
-                                <i class="fa-solid fa-utensils" style="color:var(--sys-orange); width:24px; text-align:center; margin-right:4px;"></i>
-                                <span>三餐饮食记录</span>
-                            </label>
-                            <textarea id="meals" placeholder="例如：早餐麦片，午餐外卖炸鸡..." rows="2"></textarea>
-                        </li>
-                        <li class="list-item">
-                            <label for="mood">
-                                <i class="fa-regular fa-face-smile" style="color:var(--sys-yellow); width:24px; text-align:center; margin-right:4px;"></i>
-                                <span>心情</span>
-                            </label>
-                            <select id="mood">
-                                <option value="开心平和">开心 😊</option>
-                                <option value="一般般">一般 😐</option>
-                                <option value="压力大/焦虑">焦虑 😰</option>
-                                <option value="疲惫">疲惫 😫</option>
-                            </select>
-                        </li>
-                        <li class="list-item">
-                            <label for="exercise">
-                                <i class="fa-solid fa-person-running" style="color:var(--sys-green); width:24px; text-align:center; margin-right:4px;"></i>
-                                <span>运动</span>
-                            </label>
-                            <select id="exercise">
-                                <option value="无运动">无</option>
-                                <option value="轻度(散步)">轻度</option>
-                                <option value="中度(慢跑/健身)">中度</option>
-                                <option value="高强度">高强度</option>
-                            </select>
-                        </li>
-                        <li class="list-item">
-                            <label for="sleep">
-                                <i class="fa-solid fa-bed" style="color:var(--sys-purple); width:24px; text-align:center; margin-right:4px;"></i>
-                                <span>昨晚睡眠</span>
-                            </label>
-                            <input type="text" id="sleep" placeholder="例如：12睡8起">
-                        </li>
-                    </ul>
+                    <div class="fluent-card">
+                        <h3 class="fluent-card-title">生活与作息评估</h3>
+                        
+                        <div class="form-group">
+                            <label for="meals" class="fluent-label">三餐饮食记录</label>
+                            <textarea id="meals" class="fluent-input" placeholder="例如：早餐麦片，午餐外卖炸鸡..." rows="2"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="fluent-label">心情情绪</label>
+                            <div class="chip-group" data-target="mood">
+                                <button type="button" class="chip active" data-value="开心平和">开心平和</button>
+                                <button type="button" class="chip" data-value="一般般">一般般</button>
+                                <button type="button" class="chip" data-value="压力大/焦虑">压力/焦虑</button>
+                                <button type="button" class="chip" data-value="疲惫">疲惫</button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="fluent-label">运动情况</label>
+                            <div class="chip-group" data-target="exercise">
+                                <button type="button" class="chip active" data-value="无运动">无运动</button>
+                                <button type="button" class="chip" data-value="轻度(散步)">轻度散步</button>
+                                <button type="button" class="chip" data-value="中度(慢跑/健身)">慢跑健身</button>
+                                <button type="button" class="chip" data-value="高强度">高强度拉练</button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="sleep" class="fluent-label">昨晚睡眠</label>
+                            <input type="text" id="sleep" class="fluent-input" placeholder="例如：12点睡8点起">
+                        </div>
+                    </div>
 
-                    <button type="submit" id="saveBtn" class="ios-btn primary-btn">保存今日完整记录</button>
+                    <button type="submit" id="saveBtn" class="fluent-btn primary">保存并同步今日记录</button>
                 </form>
             </section>
 
             <section id="historyView" class="view">
-                <header class="ios-header">
-                   <h1 class="large-title">历史记录</h1>
+                <header class="fluent-header">
+                    <div>
+                        <h1 style="font-size: 1.8rem; font-weight: 700;">历史数据</h1>
+                        <p style="color: var(--text-sec); font-size: 0.85rem;">你所有的记录详情</p>
+                    </div>
                 </header>
-                <div id="historyList" class="history-container" style="padding-top:1rem;">
+                <div id="historyList">
                     <div class="empty-state">暂无记录，快去记一笔吧！</div>
                 </div>
             </section>
 
             <section id="analysisView" class="view">
-                 <header class="ios-header">
-                   <h1 class="large-title">健康分析</h1>
-                 </header>
-                 <div class="analysis-card">
-                    <div style="width:64px; height:64px; border-radius:18px; font-size:2rem; margin:0 auto 1.5rem; display:flex; justify-content:center; align-items:center;">
-                        <i class="fa-solid fa-wand-magic-sparkles" style="color:var(--sys-purple);"></i>
+                <header class="fluent-header">
+                    <div>
+                        <h1 style="font-size: 1.8rem; font-weight: 700;">AI 分析</h1>
+                        <p style="color: var(--text-sec); font-size: 0.85rem;">全方位健康洞察</p>
                     </div>
-                    <h2 class="gradient-text">基于AI深度分析</h2>
-                    <p class="analysis-desc">整合您最近 30 天的肠道表现与生活习惯模式。</p>
+                </header>
+                 <div class="fluent-card" style="text-align: center; padding: 2rem 1rem;">
+                    <div class="analysis-header-icon">
+                        ✨
+                    </div>
+                    <h2 style="color:var(--accent);">月度趋势诊疗报告</h2>
+                    <p style="color:var(--text-sec); font-size: 0.9rem; margin-bottom: 2rem;">整合您最近 30 天的肠道表现与生活习惯模式，交由大语言模型执行极速诊断。</p>
                     
-                    <div class="action-row">
-                        <button id="generateReportBtn" class="ios-btn ai-btn" style="flex: 2;">
-                            <span class="btn-text">生成 AI 诊断报告</span>
+                    <div style="display:flex; gap:0.5rem; justify-content:center;">
+                        <button id="generateReportBtn" class="fluent-btn primary" style="flex:2;">
+                            <span class="btn-text">生成 AI 诊断</span>
                             <div class="spinner hidden"></div>
                         </button>
-                        <button id="exportDataBtn" class="ios-btn" style="flex: 1; background:var(--card-bg-elevated); color:var(--text-main);">
-                            PDF导出
-                        </button>
+                        <button id="exportDataBtn" class="fluent-btn outline" style="flex:1; margin-bottom:0; box-shadow:none;">CSV导出</button>
                     </div>
                     
                     <div id="reportContainer" class="report-box hidden">
-                        <div class="report-header">
-                            <h3 style="font-size:1.1rem; color:var(--text-main);">诊断结果</h3>
-                            <span class="report-date" id="reportDate" style="color:var(--text-muted); font-size:0.8rem;"></span>
+                        <div style="display:flex; justify-content:space-between; align-items:flex-end; border-bottom:1px solid var(--border-light); padding-bottom:10px; margin-bottom:15px;">
+                            <h3 style="font-size:1.05rem; font-weight:600;">诊断结果</h3>
+                            <span id="reportDate" style="color:var(--text-sec); font-size:0.8rem;"></span>
                         </div>
-                        <div id="reportContent" class="report-content"></div>
+                        <div id="reportContent" class="report-content" style="text-align:left;"></div>
                     </div>
                  </div>
             </section>
@@ -125,121 +119,103 @@
 
         <nav class="bottom-nav">
             <button class="nav-item active" data-target="logView">
-                <i class="fa-solid fa-pen-to-square"></i>
+                <i class="fa-solid fa-pen-nib"></i>
                 <span>记录</span>
             </button>
             <button class="nav-item" data-target="historyView">
-                <i class="fa-solid fa-list-ul"></i>
+                <i class="fa-solid fa-clock-rotate-left"></i>
                 <span>历史</span>
             </button>
-            <button class="nav-item ai-tab" data-target="analysisView">
-                <i class="fa-solid fa-robot"></i>
-                <span>分析</span>
+            <button class="nav-item" data-target="analysisView">
+                <i class="fa-solid fa-microchip"></i>
+                <span>洞察</span>
             </button>
         </nav>
         
         <div id="settingsModal" class="modal hidden">
-            <div class="glass-modal">
-                <div class="modal-header">
-                    <h3>系统设置</h3>
-                    <button id="closeSettings" class="icon-btn" style="width:30px;height:30px;font-size:1rem;"><i class="fa-solid fa-xmark"></i></button>
+            <div class="fluent-dialog">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1.5rem;">
+                    <h3 style="font-size: 1.25rem;">系统设置</h3>
+                    <button id="closeSettings" class="icon-btn"><i class="fa-solid fa-xmark"></i></button>
                 </div>
-                <div class="modal-body">
-                    <ul class="inset-grouped-list">
-                        <li class="list-item textarea-item">
-                            <label><i class="fa-solid fa-key" style="color:var(--sys-blue); width:24px; text-align:center;"></i> API Key (Kimi)</label>
-                            <input type="password" id="apiKey" style="width:100%; text-align:left; margin-top:8px;" placeholder="sk-...">
-                        </li>
-                    </ul>
-                    
-                    <div class="hint">GitHub 数据双向同步 (推荐)</div>
-                    <ul class="inset-grouped-list">
-                        <li class="list-item">
-                            <label>Gist ID</label>
-                            <input type="text" id="binId" placeholder="例如: 8a9b...">
-                        </li>
-                        <li class="list-item">
-                            <label>Token</label>
-                            <input type="password" id="binKey" placeholder="默认已免配">
-                        </li>
-                    </ul>
-                    <button id="saveSettingsBtn" class="ios-btn primary-btn" style="margin-top:0;">保存设置</button>
+                
+                <div class="form-group">
+                    <label class="fluent-label">API Key (Kimi)</label>
+                    <input type="password" id="apiKey" class="fluent-input" placeholder="sk-...">
                 </div>
+                
+                <div class="form-group" style="margin-top: 1.5rem;">
+                    <label class="fluent-label">Cloud Sync (GitHub Gist ID)</label>
+                    <input type="text" id="binId" class="fluent-input" placeholder="例如: 8a9b...">
+                </div>
+                <div class="form-group">
+                    <label class="fluent-label">GitHub Token</label>
+                    <input type="password" id="binKey" class="fluent-input" placeholder="可选免配">
+                </div>
+                
+                <button id="saveSettingsBtn" class="fluent-btn primary" style="margin-top:2rem;">保存并应用</button>
             </div>
         </div>
     </div>
 
     <!-- The Template for poop entries -->
     <template id="poopEntryTemplate">
-        <div class="poop-entry-card">
-            <button type="button" class="remove-poop-btn"><i class="fa-solid fa-minus"></i></button>
-            <h2 class="section-header">排便详情信息</h2>
-            <ul class="inset-grouped-list">
-                <li class="list-item">
-                    <label>
-                        <i class="fa-regular fa-clock" style="color:var(--sys-gray); width:24px; text-align:center; margin-right:4px;"></i>
-                        <span>排便时间</span>
-                    </label>
-                    <input type="time" class="poop-time" required>
-                </li>
-                
-                <li class="list-item" style="flex-direction:column; align-items:stretch; padding:1rem;">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:1rem; align-items:center;">
-                        <label style="margin:0;"><i class="fa-regular fa-star" style="color:var(--sys-blue); width:24px; text-align:center; margin-right:4px;"></i><span>综合自评</span></label>
-                        <span class="score-display">80分</span>
-                    </div>
-                    <input type="range" class="fluid-slider blue-fill poop-score" min="0" max="100" value="80">
-                    <div class="scale-labels" style="margin-top:0.75rem;"><span>糟糕透顶</span><span>完美畅通</span></div>
-                </li>
-                
-                <li class="list-item" style="flex-direction:column; align-items:stretch; padding:1rem;">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:1rem; align-items:center;">
-                        <label style="margin:0;"><i class="fa-solid fa-droplet" style="color:var(--sys-green); width:24px; text-align:center; margin-right:4px;"></i><span>便便形状 (干湿)</span></label>
-                    </div>
-                    <input type="range" class="fluid-slider green-fill poop-bristol" min="1" max="7" value="4">
-                    <div class="scale-labels" style="margin-top:0.75rem;"><span>拉水极稀</span><span>理想</span><span>干硬羊粪</span></div>
-                </li>
-                
-                <li class="list-item">
-                    <label>
-                        <i class="fa-solid fa-palette" style="color:var(--sys-orange); width:24px; text-align:center; margin-right:4px;"></i>
-                        <span>颜色</span>
-                    </label>
-                    <select class="poop-color">
-                        <option value="棕色" selected>健康棕</option>
-                        <option value="浅黄">浅黄金</option>
-                        <option value="绿色">泛绿色</option>
-                        <option value="黑色">黑漆色</option>
-                        <option value="红色">红/带血</option>
-                        <option value="灰白">灰白色</option>
-                    </select>
-                </li>
-                
-                <li class="list-item">
-                    <label>
-                        <i class="fa-solid fa-wind" style="color:var(--sys-purple); width:24px; text-align:center; margin-right:4px;"></i>
-                        <span>顺畅度</span>
-                    </label>
-                    <select class="poop-smoothness">
-                        <option value="很顺畅">极顺畅</option>
-                        <option value="一般" selected>一般</option>
-                        <option value="有些吃力">吃力</option>
-                        <option value="便秘困难">便秘艰难</option>
-                    </select>
-                </li>
-                
-                <li class="list-item">
-                    <label>
-                        <i class="fa-solid fa-cubes" style="color:var(--sys-red); width:24px; text-align:center; margin-right:4px;"></i>
-                        <span>粘黏马桶</span>
-                    </label>
-                    <select class="poop-viscosity">
-                        <option value="不粘" selected>不粘</option>
-                        <option value="轻微粘">轻微粘</option>
-                        <option value="很粘糊">难冲洗</option>
-                    </select>
-                </li>
-            </ul>
+        <div class="fluent-card poop-entry-card relative">
+            <button type="button" class="remove-poop-btn" title="删除当前记录"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="fluent-card-title" style="color:var(--accent);">排便生理特征</h3>
+            
+            <div class="form-group">
+                <label class="fluent-label">排便时间</label>
+                <input type="time" class="fluent-input poop-time" required>
+            </div>
+            
+            <div class="form-group">
+                <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+                    <label class="fluent-label" style="margin:0;">综合自评</label>
+                    <span class="val-display score-display">80分</span>
+                </div>
+                <input type="range" class="fluent-slider poop-score" min="0" max="100" value="80">
+                <div class="scale-labels"><span>糟糕透顶 (0)</span><span>完美顺畅 (100)</span></div>
+            </div>
+            
+            <div class="form-group">
+                <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+                    <label class="fluent-label" style="margin:0;">形态 (Bristol评级)</label>
+                </div>
+                <input type="range" class="fluent-slider poop-bristol" min="1" max="7" value="4">
+                <div class="scale-labels"><span>拉水(极稀)</span><span>理想中点</span><span>干硬羊粪</span></div>
+            </div>
+            
+            <div class="form-group">
+                <label class="fluent-label">主要颜色</label>
+                <div class="chip-group" data-target="poop-color">
+                    <button type="button" class="chip active" data-value="棕色">健康棕</button>
+                    <button type="button" class="chip" data-value="浅黄">浅黄</button>
+                    <button type="button" class="chip" data-value="绿色" data-tint="绿色">泛绿</button>
+                    <button type="button" class="chip" data-value="黑色">黑漆色</button>
+                    <button type="button" class="chip" data-value="红色" data-tint="红色">红/带血</button>
+                    <button type="button" class="chip" data-value="灰白">灰极化</button>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="fluent-label">整体顺畅度</label>
+                <div class="chip-group" data-target="poop-smoothness">
+                    <button type="button" class="chip" data-value="很顺畅">极度顺畅</button>
+                    <button type="button" class="chip active" data-value="一般">一般水平</button>
+                    <button type="button" class="chip" data-value="有些吃力">有些吃力</button>
+                    <button type="button" class="chip" data-value="便秘困难" data-tint="红色">便秘艰难</button>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="fluent-label">马桶粘连</label>
+                <div class="chip-group" data-target="poop-viscosity">
+                    <button type="button" class="chip active" data-value="不粘">毫不粘连</button>
+                    <button type="button" class="chip" data-value="轻微粘">轻微粘连</button>
+                    <button type="button" class="chip" data-value="很粘糊" data-tint="红色">难冲洗级巨糊</button>
+                </div>
+            </div>
         </div>
     </template>
 

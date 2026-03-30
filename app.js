@@ -85,6 +85,41 @@ function migrateData() {
     }
 }
 
+// Global Chip Interaction Logic (Fluent UI implementation)
+document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('chip')) {
+        const group = e.target.closest('.chip-group');
+        if (group) {
+            group.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            e.target.classList.add('active');
+        }
+    }
+});
+
+function setChipActivity(container, targetName, value) {
+    if (!container) return;
+    const group = container.querySelector(`.chip-group[data-target="${targetName}"]`);
+    if (!group) return;
+    const chips = group.querySelectorAll('.chip');
+    chips.forEach(c => c.classList.remove('active'));
+    let found = false;
+    if (value) {
+        chips.forEach(c => {
+            if (c.getAttribute('data-value') === value) {
+                c.classList.add('active');
+                found = true;
+            }
+        });
+    }
+    if (!found && chips.length > 0) chips[0].classList.add('active');
+}
+
+function getChipValue(container, targetName) {
+    const active = container.querySelector(`.chip-group[data-target="${targetName}"] .chip.active`);
+    return active ? active.getAttribute('data-value') : '';
+}
+
+
 // Cloud Sync Function
 async function syncToCloud() {
     if (!binId || !binKey) return false;
@@ -153,7 +188,6 @@ function addPoopEntry(data = null) {
     const scoreDisplay = clone.querySelector('.score-display');
     const updateScoreGradient = (val) => {
         scoreDisplay.innerText = val + '分';
-        // the default box-shadow handles the fill correctly for green-fill and blue-fill
     };
     scoreInput.addEventListener('input', (e) => updateScoreGradient(e.target.value));
 
@@ -162,9 +196,11 @@ function addPoopEntry(data = null) {
         scoreInput.value = data.score;
         updateScoreGradient(data.score);
         clone.querySelector('.poop-bristol').value = 8 - parseInt(data.bristol || 4);
-        clone.querySelector('.poop-color').value = data.color;
-        clone.querySelector('.poop-smoothness').value = data.smoothness;
-        clone.querySelector('.poop-viscosity').value = data.viscosity;
+        
+        // Use new Fluent Chip system
+        setChipActivity(wrapper, 'poop-color', data.color);
+        setChipActivity(wrapper, 'poop-smoothness', data.smoothness);
+        setChipActivity(wrapper, 'poop-viscosity', data.viscosity);
     } else {
         const now = new Date();
         const offset = now.getTimezoneOffset() * 60000;
@@ -179,13 +215,15 @@ addPoopBtn.addEventListener('click', () => addPoopEntry());
 function loadLogForDate(dateStr) {
     poopsContainer.innerHTML = '';
     const existing = logs.find(l => l.date === dateStr);
+    const formContainer = document.getElementById('trackerForm');
 
     if (existing) {
         editingLogId = existing.id || existing.date;
         document.getElementById('meals').value = existing.meals || '';
-        document.getElementById('mood').value = existing.mood || '开心平和';
-        document.getElementById('exercise').value = existing.exercise || '无运动';
         document.getElementById('sleep').value = existing.sleep || '';
+        
+        setChipActivity(formContainer, 'mood', existing.mood);
+        setChipActivity(formContainer, 'exercise', existing.exercise);
 
         if (existing.poops && existing.poops.length > 0) {
             existing.poops.forEach(p => addPoopEntry(p));
@@ -195,9 +233,12 @@ function loadLogForDate(dateStr) {
     } else {
         editingLogId = null;
         document.getElementById('meals').value = '';
+        document.getElementById('sleep').value = '';
+        setChipActivity(formContainer, 'mood', '开心平和');
+        setChipActivity(formContainer, 'exercise', '无运动');
         addPoopEntry(); // Load one blank poop entry
     }
-    submitBtn.innerText = '保存今日完整记录';
+    submitBtn.innerText = '保存并同步今日记录';
 }
 
 function resetFormDate() {
@@ -264,10 +305,10 @@ if (syncBtn) {
         const success = await syncToCloud();
 
         if (success) {
-            syncBtn.innerHTML = '<i class="fa-solid fa-check" style="color: #2ea043;"></i>';
+            syncBtn.innerHTML = '<i class="fa-solid fa-check" style="color: #6CCB5F;"></i>';
             setTimeout(() => { syncBtn.innerHTML = originalHtml; syncBtn.disabled = false; }, 2000);
         } else {
-            syncBtn.innerHTML = '<i class="fa-solid fa-xmark" style="color: #da3633;"></i>';
+            syncBtn.innerHTML = '<i class="fa-solid fa-xmark" style="color: #FF99A4;"></i>';
             setTimeout(() => { syncBtn.innerHTML = originalHtml; syncBtn.disabled = false; }, 2000);
         }
     });
@@ -286,9 +327,9 @@ form.addEventListener('submit', async (e) => {
             time: node.querySelector('.poop-time').value,
             score: node.querySelector('.poop-score').value,
             bristol: String(8 - parseInt(node.querySelector('.poop-bristol').value)),
-            color: node.querySelector('.poop-color').value,
-            smoothness: node.querySelector('.poop-smoothness').value,
-            viscosity: node.querySelector('.poop-viscosity').value
+            color: getChipValue(node, 'poop-color'),
+            smoothness: getChipValue(node, 'poop-smoothness'),
+            viscosity: getChipValue(node, 'poop-viscosity')
         });
     });
 
@@ -299,8 +340,8 @@ form.addEventListener('submit', async (e) => {
         id: dateVal,
         date: dateVal,
         meals: document.getElementById('meals').value,
-        mood: document.getElementById('mood').value,
-        exercise: document.getElementById('exercise').value,
+        mood: getChipValue(document.getElementById('trackerForm'), 'mood'),
+        exercise: getChipValue(document.getElementById('trackerForm'), 'exercise'),
         sleep: document.getElementById('sleep').value,
         poops: poops
     };
@@ -312,32 +353,32 @@ form.addEventListener('submit', async (e) => {
     logs.sort((a, b) => new Date(b.date) - new Date(a.date));
     localStorage.setItem('poopLogs', JSON.stringify(logs));
 
-    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 保存并上传云端...';
+    submitBtn.innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:2px;border-top-color:#000;"></div> 保存并上传云端...';
     submitBtn.disabled = true;
 
     if (binId && binKey) {
         const success = await syncToCloud();
         if (success) {
-            submitBtn.innerText = '✅ 已保存并同步';
-            submitBtn.style.background = '#2ea043';
+            submitBtn.innerText = '✅ 同步成功';
+            submitBtn.style.background = '#6CCB5F';
         } else {
-            submitBtn.innerText = '⚠️ 已保存本地(同步失败)';
-            submitBtn.style.background = '#d97706';
+            submitBtn.innerText = '⚠️ 本地保存(同步失败)';
+            submitBtn.style.background = '#FF9F0A';
         }
     } else {
         submitBtn.innerText = '✅ 已保存到本地';
-        submitBtn.style.background = '#2ea043';
+        submitBtn.style.background = '#6CCB5F';
     }
 
     setTimeout(() => {
-        submitBtn.innerText = '保存今日完整记录';
+        submitBtn.innerText = '保存并同步今日记录';
         submitBtn.style.background = '';
         submitBtn.disabled = false;
         navItems[1].click(); // switch to history view
     }, 1500);
 });
 
-// Render History
+// Render History (Fluent Native layout)
 function renderHistory() {
     if (logs.length === 0) {
         historyList.innerHTML = `<div class="empty-state">暂无记录，快去记一笔吧！</div>`;
@@ -345,45 +386,43 @@ function renderHistory() {
     }
 
     historyList.innerHTML = logs.map(log => `
-        <div class="history-item">
-            <div class="history-header">
+        <div class="history-card">
+            <div class="history-header-flex">
                 <div class="history-date">${log.date} <span>共排便 ${log.poops.length} 次</span></div>
-                <div class="history-actions">
-                    <button class="action-btn edit-btn" onclick="editLog('${log.date}')"><i class="fa-solid fa-pen"></i></button>
-                    <button class="action-btn delete-btn" onclick="deleteLog('${log.date}')"><i class="fa-solid fa-trash"></i></button>
+                <div style="display:flex; gap:0.5rem;">
+                    <button class="icon-btn" onclick="editLog('${log.date}')"><i class="fa-solid fa-pen" style="font-size:0.9rem;"></i></button>
+                    <button class="icon-btn" onclick="deleteLog('${log.date}')"><i class="fa-solid fa-trash" style="font-size:0.9rem;"></i></button>
                 </div>
             </div>
             
-            <div class="history-content">
-                <div class="history-tags">
-                    <span class="tag"><i class="fa-regular fa-face-smile" style="color:var(--sys-yellow);"></i> ${log.mood}</span>
-                    <span class="tag"><i class="fa-solid fa-person-running" style="color:var(--sys-green);"></i> ${log.exercise}</span>
-                    ${log.sleep ? `<span class="tag"><i class="fa-solid fa-bed" style="color:var(--sys-purple);"></i> 睡眠: ${log.sleep}</span>` : ''}
-                </div>
-                ${log.meals ? `<div class="history-diet">饮食: ${log.meals}</div>` : ''}
-                
-                <div style="display:flex; flex-direction:column; gap:0.5rem;">
-                    ${log.poops.map(p => `
-                        <div class="poop-record-card">
-                            <div class="poop-record-header">
-                                <span style="color:var(--text-main);">Bristol ${p.bristol}型, ${p.color}色</span>
-                                <span style="color:var(--text-muted); font-size: 0.8rem;"><i class="fa-regular fa-clock"></i> ${p.time}</span>
-                            </div>
-                            <div class="history-tags" style="margin-bottom:0; gap: 0.4rem;">
-                                <span class="tag" style="background:var(--card-bg)"><i class="fa-solid fa-star" style="color:var(--sys-blue);"></i> ${p.score}分</span>
-                                <span class="tag" style="background:var(--card-bg)"><i class="fa-solid fa-wind" style="color:var(--sys-purple);"></i> ${p.smoothness}</span>
-                                <span class="tag" style="background:var(--card-bg)"><i class="fa-solid fa-cubes" style="color:var(--sys-red);"></i> ${p.viscosity}</span>
-                            </div>
+            <div class="record-tags">
+                <span class="rc-tag">心情: ${log.mood}</span>
+                <span class="rc-tag">运动: ${log.exercise}</span>
+                ${log.sleep ? `<span class="rc-tag">睡眠: ${log.sleep}</span>` : ''}
+            </div>
+            ${log.meals ? `<div class="history-diet">${log.meals}</div>` : ''}
+            
+            <div style="display:flex; flex-direction:column;">
+                ${log.poops.map(p => `
+                    <div class="poop-min-card">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:flex-end;">
+                            <span style="color:var(--text-main); font-weight:600; font-size: 0.95rem;">Bristol ${p.bristol} - ${p.color}</span>
+                            <span style="color:var(--text-sec); font-size:0.8rem;">${p.time}</span>
                         </div>
-                    `).join('')}
-                </div>
+                        <div class="record-tags" style="margin-bottom:0; gap:0.3rem;">
+                            <span class="rc-tag" style="background:transparent; border:none; padding:0; color:var(--text-sec);">综合 <span style="color:var(--accent); font-weight:600;">${p.score}</span> 分</span>
+                            <span class="rc-tag" style="background:transparent; border:none; padding:0; color:var(--text-sec);">| ${p.smoothness}</span>
+                            <span class="rc-tag" style="background:transparent; border:none; padding:0; color:var(--text-sec);">| ${p.viscosity}</span>
+                        </div>
+                    </div>
+                `).join('')}
             </div>
         </div>
     `).join('');
 }
 
 window.deleteLog = function (dateStr) {
-    if (confirm(`确定要删除 ${dateStr} 这一天的所有记录吗？`)) {
+    if (confirm(`确定要彻底删除 ${dateStr} 这一天的所有记录吗？`)) {
         logs = logs.filter(l => l.date !== dateStr);
         localStorage.setItem('poopLogs', JSON.stringify(logs));
         renderHistory();
@@ -400,23 +439,23 @@ const exportDataBtn = document.getElementById('exportDataBtn');
 exportDataBtn.addEventListener('click', () => {
     if (logs.length === 0) return alert("尚无数据可导出！");
     const originalText = exportDataBtn.innerHTML;
-    exportDataBtn.innerHTML = `<div class="spinner" style="width:14px;height:14px;border-width:2px;"></div> 导出中`;
+    exportDataBtn.innerHTML = `<div class="spinner" style="width:14px;height:14px;border-width:2px;"></div>`;
     exportDataBtn.disabled = true;
 
     const container = document.createElement('div');
     container.style.padding = '20px 40px';
-    container.style.fontFamily = "'Inter', sans-serif";
+    container.style.fontFamily = "'Segoe UI', sans-serif";
     container.style.color = '#333';
     container.style.background = '#fff';
 
-    let htmlContent = `<h1 style="text-align:center; color:#238636; border-bottom: 2px solid #238636; padding-bottom: 10px;">便便日记记录报告</h1>
+    let htmlContent = `<h1 style="text-align:center; color:#005A9E; border-bottom: 2px solid #005A9E; padding-bottom: 10px;">便便日记记录报告</h1>
         <p style="text-align:center; color:#666; font-size: 14px; margin-bottom: 30px;">生成时间：${new Date().toLocaleString('zh-CN')}</p>`;
 
     logs.forEach((log, i) => {
         htmlContent += `<div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px dashed #eee;">
             <h3 style="margin: 0 0 8px 0; color: #444; font-size: 16px;">${log.date} (排便 ${log.poops.length} 次)</h3>
             <div style="font-size: 14px; line-height: 1.6; margin-bottom: 10px; background:#f9f9f9; padding:8px; border-radius:4px;">
-                <strong><span style="color:#4169e1;">生活状态：</span></strong> 心情: ${log.mood}, 运动: ${log.exercise}<br>
+                <strong><span style="color:#005A9E;">整体状态：</span></strong> 心情: ${log.mood}, 运动: ${log.exercise}<br>
                 ${log.meals ? `<strong><span style="color:#2e8b57;">饮食：</span></strong> ${log.meals}<br>` : ''}
                 ${log.sleep ? `<strong><span style="color:#8a2be2;">睡眠：</span></strong> ${log.sleep}` : ''}
             </div>
@@ -440,7 +479,11 @@ exportDataBtn.addEventListener('click', () => {
 });
 
 generateReportBtn.addEventListener('click', async () => {
-    if (!apiKey) return alert("请先填写 Gemini API Key！"), settingsBtn.click();
+    if (!apiKey) {
+        alert("请先填写 Gemini / Moonshot API Key！");
+        settingsBtn.click();
+        return;
+    }
     if (logs.length === 0) return alert("尚无数据可分析！");
 
     const recentLogs = logs.slice(0, 30).map(l => ({
