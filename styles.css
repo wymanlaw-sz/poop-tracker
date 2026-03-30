@@ -20,6 +20,13 @@
     
     --transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
     --active-scale: 0.97;
+    
+    accent-color: var(--accent);
+}
+
+::selection {
+    background-color: var(--accent);
+    color: var(--text-on-accent);
 }
 
 /* ======= Reset & Base ======= */
