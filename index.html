@@ -16,7 +16,6 @@
                 <header class="fluent-header">
                     <div>
                         <h1>便便日记</h1>
-                        <p style="color: var(--text-sec); font-size: 0.85rem;">今日状态打卡</p>
                     </div>
                     <div class="header-actions">
                         <button id="syncBtn" class="icon-btn" title="手动同步"><i class="fa-solid fa-cloud-arrow-up"></i></button>
@@ -25,45 +24,50 @@
                 </header>
                 
                 <form id="trackerForm">
-                    <div class="fluent-card">
-                        <label for="recordDate" class="fluent-label">记录日期</label>
-                        <input type="date" id="recordDate" class="fluent-input" required>
+                    <div class="fluent-card ios-list-card" style="margin-top: 1rem;">
+                        <div class="ios-list-body">
+                            <div class="ios-row">
+                                <label for="recordDate" class="fluent-label">记录日期</label>
+                                <input type="date" id="recordDate" class="fluent-input" required>
+                            </div>
+                        </div>
                     </div>
 
                     <div id="poopsContainer"></div>
                     
                     <button type="button" id="addPoopBtn" class="fluent-btn outline"><i class="fa-solid fa-plus"></i> 追加一次排便信息</button>
 
-                    <div class="fluent-card">
-                        <h3 class="fluent-card-title">生活与作息评估</h3>
-                        
-                        <div class="form-group">
-                            <label for="meals" class="fluent-label">三餐饮食记录</label>
-                            <textarea id="meals" class="fluent-input" placeholder="例如：早餐麦片，午餐外卖炸鸡..." rows="2"></textarea>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="fluent-label">情绪</label>
-                            <select class="fluent-input" data-target="mood">
-                                <option value="开心平和">开心平和</option>
-                                <option value="正常">正常</option>
-                                <option value="压力/焦虑">压力/焦虑</option>
-                                <option value="疲惫">疲惫</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="fluent-label">运动情况</label>
-                            <select class="fluent-input" data-target="exercise">
-                                <option value="轻度">轻度</option>
-                                <option value="中度">中度</option>
-                                <option value="重度">重度</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="sleep" class="fluent-label">昨晚睡眠</label>
-                            <input type="text" id="sleep" class="fluent-input" placeholder="例如：12点睡8点起">
+                    <div class="fluent-card ios-list-card">
+                        <h3 class="fluent-card-title list-header">生活作息</h3>
+                        <div class="ios-list-body">
+                            <div class="ios-row">
+                                <label for="meals" class="fluent-label">饮食记录</label>
+                                <input type="text" id="meals" class="fluent-input" placeholder="例如：麦片...">
+                            </div>
+                            
+                            <div class="ios-row">
+                                <label class="fluent-label">情绪</label>
+                                <select class="fluent-input" data-target="mood" dir="rtl">
+                                    <option value="开心平和">开心平和</option>
+                                    <option value="正常">正常</option>
+                                    <option value="压力/焦虑">压力/焦虑</option>
+                                    <option value="疲惫">疲惫</option>
+                                </select>
+                            </div>
+                            
+                            <div class="ios-row">
+                                <label class="fluent-label">运动情况</label>
+                                <select class="fluent-input" data-target="exercise" dir="rtl">
+                                    <option value="轻度">轻度</option>
+                                    <option value="中度">中度</option>
+                                    <option value="重度">重度</option>
+                                </select>
+                            </div>
+                            
+                            <div class="ios-row">
+                                <label for="sleep" class="fluent-label">睡眠时长</label>
+                                <input type="text" id="sleep" class="fluent-input" placeholder="例如：8小时">
+                            </div>
                         </div>
                     </div>
 
@@ -156,60 +160,63 @@
 
     <!-- The Template for poop entries -->
     <template id="poopEntryTemplate">
-        <div class="fluent-card poop-entry-card relative">
-            <button type="button" class="remove-poop-btn" title="删除当前记录"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="fluent-card-title">排便生理特征</h3>
-            
-            <div class="form-group">
-                <label class="fluent-label">排便时间</label>
-                <input type="time" class="fluent-input poop-time" required>
-            </div>
-            
-            <div class="form-group">
-                <div style="display:flex; justify-content:space-between; align-items:flex-end;">
-                    <label class="fluent-label" style="margin:0;">综合自评</label>
-                    <span class="val-display score-display">80分</span>
+        <div class="fluent-card ios-list-card poop-entry-card relative">
+            <button type="button" class="remove-poop-btn" title="删除当前记录" style="top: 0rem; right: 0.5rem; z-index: 10;"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="fluent-card-title list-header">生理特征</h3>
+            <div class="ios-list-body">
+                <div class="ios-row">
+                    <label class="fluent-label">排便时间</label>
+                    <input type="time" class="fluent-input poop-time" required>
                 </div>
-                <input type="range" class="fluent-slider poop-score" min="0" max="100" value="80">
-            </div>
-            
-            <div class="form-group">
-                <div style="display:flex; justify-content:space-between; align-items:flex-end;">
-                    <label class="fluent-label" style="margin:0;">形态 (Bristol评级)</label>
+                
+                <div class="ios-row">
+                    <label class="fluent-label">综合自评</label>
+                    <input type="number" class="fluent-input poop-score" placeholder="例如：80" min="0" max="100" value="80">
                 </div>
-                <input type="range" class="fluent-slider poop-bristol" min="1" max="7" value="4">
-                <div class="scale-labels"><span>拉水</span><span>理想</span><span>干硬</span></div>
-            </div>
-            
-            <div class="form-group">
-                <label class="fluent-label">颜色</label>
-                <select class="fluent-input" data-target="poop-color">
-                    <option value="棕色">棕色</option>
-                    <option value="黄色">黄色</option>
-                    <option value="绿色">绿色</option>
-                    <option value="黑色">黑色</option>
-                    <option value="带血">带血</option>
-                    <option value="灰色">灰色</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label class="fluent-label">顺畅度</label>
-                <select class="fluent-input" data-target="poop-smoothness">
-                    <option value="很顺畅">极度顺畅</option>
-                    <option value="一般">一般水平</option>
-                    <option value="有些吃力">有些吃力</option>
-                    <option value="便秘困难">便秘艰难</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label class="fluent-label">马桶粘连</label>
-                <select class="fluent-input" data-target="poop-viscosity">
-                    <option value="不粘">毫不粘连</option>
-                    <option value="轻微粘">轻微粘连</option>
-                    <option value="很粘糊">难冲洗级巨糊</option>
-                </select>
+                
+                <div class="ios-row">
+                    <label class="fluent-label">形态 (Bristol)</label>
+                    <select class="fluent-input poop-bristol" data-target="poop-bristol" dir="rtl">
+                        <option value="1">1型 (干球/羊粪)</option>
+                        <option value="2">2型 (块状/香肠)</option>
+                        <option value="3">3型 (裂纹/香肠)</option>
+                        <option value="4" selected>4型 (光滑/长条)</option>
+                        <option value="5">5型 (软块/易排)</option>
+                        <option value="6">6型 (糊状/絮状)</option>
+                        <option value="7">7型 (水状/腹泻)</option>
+                    </select>
+                </div>
+                
+                <div class="ios-row">
+                    <label class="fluent-label">颜色</label>
+                    <select class="fluent-input" data-target="poop-color" dir="rtl">
+                        <option value="棕色">棕色</option>
+                        <option value="黄色">黄色</option>
+                        <option value="绿色">绿色</option>
+                        <option value="黑色">黑色</option>
+                        <option value="带血">带血</option>
+                        <option value="灰色">灰色</option>
+                    </select>
+                </div>
+                
+                <div class="ios-row">
+                    <label class="fluent-label">顺畅度</label>
+                    <select class="fluent-input" data-target="poop-smoothness" dir="rtl">
+                        <option value="很顺畅">极度顺畅</option>
+                        <option value="一般">一般水平</option>
+                        <option value="有些吃力">有些吃力</option>
+                        <option value="便秘困难">便秘艰难</option>
+                    </select>
+                </div>
+                
+                <div class="ios-row">
+                    <label class="fluent-label">马桶粘连</label>
+                    <select class="fluent-input" data-target="poop-viscosity" dir="rtl">
+                        <option value="不粘">毫不粘连</option>
+                        <option value="轻微粘">轻微粘连</option>
+                        <option value="很粘糊">难冲洗级巨糊</option>
+                    </select>
+                </div>
             </div>
         </div>
     </template>

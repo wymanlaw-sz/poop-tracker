@@ -162,19 +162,12 @@ function addPoopEntry(data = null) {
     // Add remove logic
     clone.querySelector('.remove-poop-btn').addEventListener('click', () => wrapper.remove());
 
-    // Score listener and slider styling
     const scoreInput = clone.querySelector('.poop-score');
-    const scoreDisplay = clone.querySelector('.score-display');
-    const updateScoreGradient = (val) => {
-        scoreDisplay.innerText = val + '分';
-    };
-    scoreInput.addEventListener('input', (e) => updateScoreGradient(e.target.value));
 
     if (data) {
         clone.querySelector('.poop-time').value = data.time;
         scoreInput.value = data.score;
-        updateScoreGradient(data.score);
-        clone.querySelector('.poop-bristol').value = 8 - parseInt(data.bristol || 4);
+        clone.querySelector('.poop-bristol').value = data.bristol || 4;
         
         // Use new Fluent Chip system
         setSelectValue(wrapper, 'poop-color', data.color);
@@ -305,7 +298,7 @@ form.addEventListener('submit', async (e) => {
         poops.push({
             time: node.querySelector('.poop-time').value,
             score: node.querySelector('.poop-score').value,
-            bristol: String(8 - parseInt(node.querySelector('.poop-bristol').value)),
+            bristol: node.querySelector('.poop-bristol').value,
             color: getSelectValue(node, 'poop-color'),
             smoothness: getSelectValue(node, 'poop-smoothness'),
             viscosity: getSelectValue(node, 'poop-viscosity')
