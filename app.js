@@ -310,16 +310,29 @@ form.addEventListener('submit', async (e) => {
     logs.sort((a,b) => new Date(b.date) - new Date(a.date));
     localStorage.setItem('poopLogs', JSON.stringify(logs));
     
-    submitBtn.innerText = '✅ 已保存到本地';
-    submitBtn.style.background = '#2ea043';
+    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 保存并上传云端...';
     submitBtn.disabled = true;
+    
+    if (binId && binKey) {
+        const success = await syncToCloud();
+        if (success) {
+            submitBtn.innerText = '✅ 已保存并同步';
+            submitBtn.style.background = '#2ea043';
+        } else {
+            submitBtn.innerText = '⚠️ 已保存本地(同步失败)';
+            submitBtn.style.background = '#d97706';
+        }
+    } else {
+        submitBtn.innerText = '✅ 已保存到本地';
+        submitBtn.style.background = '#2ea043';
+    }
     
     setTimeout(() => {
         submitBtn.innerText = '保存今日完整记录';
         submitBtn.style.background = '';
         submitBtn.disabled = false;
         navItems[1].click(); // switch to history view
-    }, 1000);
+    }, 1500);
 });
 
 // Render History

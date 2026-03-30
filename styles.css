@@ -211,6 +211,16 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
     opacity: 1;
 }
 
+input[type="date"],
+input[type="time"] {
+    text-align: center;
+}
+input[type="date"]::-webkit-datetime-edit,
+input[type="time"]::-webkit-datetime-edit {
+    display: flex;
+    justify-content: center;
+}
+
 input:focus,
 select:focus,
 textarea:focus {
