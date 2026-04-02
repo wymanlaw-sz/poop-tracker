@@ -328,23 +328,26 @@ form.addEventListener('submit', async (e) => {
     submitBtn.innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:2px;border-top-color:#000;"></div> 提交中...';
     submitBtn.disabled = true;
 
+    const premiumSuccessHtml = '<span style="display:flex; align-items:center; justify-content:center; gap:6px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> 提交成功</span>';
+
     if (binId && binKey) {
         const success = await syncToCloud();
         if (success) {
-            submitBtn.innerText = '✅ 提交成功';
-            submitBtn.style.background = '#69a80f';
+            submitBtn.innerHTML = premiumSuccessHtml;
+            submitBtn.classList.add('premium-success');
         } else {
             submitBtn.innerText = '⚠️ 本地保存(同步失败)';
             submitBtn.style.background = '#FF9F0A';
         }
     } else {
-        submitBtn.innerText = '✅ 提交成功';
-        submitBtn.style.background = '#69a80f';
+        submitBtn.innerHTML = premiumSuccessHtml;
+        submitBtn.classList.add('premium-success');
     }
 
     setTimeout(() => {
         submitBtn.innerText = '提交';
         submitBtn.style.background = '';
+        submitBtn.classList.remove('premium-success');
         submitBtn.disabled = false;
         navItems[1].click(); // switch to history view
     }, 1500);

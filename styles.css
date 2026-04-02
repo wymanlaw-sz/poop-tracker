@@ -72,7 +72,7 @@ h3 {
 }
 
 .fluent-header {
-    padding: 2.5rem 1.5rem 1rem;
+    padding: 2.5rem 1rem 1rem;
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
@@ -183,10 +183,10 @@ h3 {
 }
 
 .ios-list-card .list-header {
-    margin: 0 0 0.8rem 1rem;
-    font-size: 1.25rem;
-    color: var(--text-main);
-    font-weight: 600;
+    margin: 0 0 0.5rem 1rem;
+    font-size: 0.85rem;
+    color: var(--text-sec);
+    font-weight: 500;
 }
 
 .ios-list-body {
@@ -229,6 +229,43 @@ h3 {
 
 .ios-row .fluent-input:focus {
     background: transparent !important;
+}
+
+.ios-row-stacked {
+    display: flex;
+    flex-direction: column;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.ios-row-stacked:last-child {
+    border-bottom: none;
+}
+
+.ios-row-stacked .fluent-label {
+    margin-bottom: 0.5rem;
+    color: var(--text-main);
+    font-size: 1.06rem;
+}
+
+.ios-row-stacked .fluent-input {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    color: var(--text-sec);
+    text-align: left;
+    width: 100%;
+}
+
+.ios-row-stacked .fluent-input:focus {
+    background: transparent !important;
+}
+
+.ios-row-stacked textarea.fluent-input {
+    resize: none;
+    min-height: 44px;
+    line-height: 1.4;
+    overflow: hidden;
 }
 
 .ios-row select.fluent-input {
@@ -394,6 +431,39 @@ textarea.fluent-input:focus {
     margin-bottom: 2rem;
 }
 .fluent-btn.outline:hover { background: rgba(255,255,255,0.05); }
+
+/* AI Gradient Button */
+.fluent-btn.ai-gradient-btn {
+    background: linear-gradient(270deg, #8b01ff, #d440ff, #8b01ff);
+    background-size: 200% 200%;
+    animation: gradientFlow 3s ease infinite;
+    color: #FFFFFF !important;
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(139, 1, 255, 0.3) !important;
+}
+
+.fluent-btn.ai-gradient-btn:hover {
+    box-shadow: 0 6px 20px rgba(139, 1, 255, 0.4) !important;
+    filter: brightness(1.1);
+}
+
+@keyframes gradientFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Premium Success State */
+@keyframes premiumSuccess {
+    0% { transform: scale(0.96); opacity: 0.9; }
+    40% { transform: scale(1.02); opacity: 1; box-shadow: 0 4px 20px rgba(105, 168, 15, 0.4); }
+    100% { transform: scale(1); box-shadow: 0 2px 10px rgba(105, 168, 15, 0.2); }
+}
+
+.premium-success {
+    animation: premiumSuccess 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards !important;
+    background: #5c930d !important;
+}
 
 /* ======= Bottom Nav ======= */
 .bottom-nav {

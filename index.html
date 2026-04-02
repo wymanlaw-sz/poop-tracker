@@ -40,9 +40,9 @@
                     <div class="fluent-card ios-list-card">
                         <h3 class="fluent-card-title list-header">生活作息</h3>
                         <div class="ios-list-body">
-                            <div class="ios-row">
+                            <div class="ios-row-stacked">
                                 <label for="meals" class="fluent-label">饮食记录</label>
-                                <input type="text" id="meals" class="fluent-input" placeholder="例如：麦片...">
+                                <textarea id="meals" class="fluent-input" placeholder="例如：麦片..." rows="2" oninput='this.style.height="";this.style.height=this.scrollHeight+"px"'></textarea>
                             </div>
                             
                             <div class="ios-row">
@@ -99,11 +99,11 @@
                     <p style="color:var(--text-sec); font-size: 0.9rem; margin-bottom: 2rem;">整合您最近 30 天的肠道表现与生活习惯模式，交由大语言模型执行极速诊断。</p>
                     
                     <div style="display:flex; gap:0.5rem; justify-content:center;">
-                        <button id="generateReportBtn" class="fluent-btn primary" style="flex:2;">
-                            <span class="btn-text">生成 AI 诊断</span>
+                        <button id="generateReportBtn" class="fluent-btn ai-gradient-btn" style="flex:2;">
+                            <span class="btn-text" style="display:flex; align-items:center; justify-content:center; gap:6px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3l1.9 5.8 1.9-5.8a2 2 0 0 1 1.3-1.3l5.8-1.9-5.8-1.9a2 2 0 0 1-1.3-1.3Z"></path></svg>生成 AI 诊断</span>
                             <div class="spinner hidden"></div>
                         </button>
-                        <button id="exportDataBtn" class="fluent-btn outline" style="flex:1; margin-bottom:0; box-shadow:none;">导出 PDF</button>
+                        <button id="exportDataBtn" class="fluent-btn primary" style="flex:1; margin-bottom:0; box-shadow:none;">导出 PDF</button>
                     </div>
                     
                     <div id="reportContainer" class="report-box hidden">
@@ -119,15 +119,15 @@
 
         <nav class="bottom-nav">
             <button class="nav-item active" data-target="logView">
-                <i class="fa-solid fa-pen-nib"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 2px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                 <span>记录</span>
             </button>
             <button class="nav-item" data-target="historyView">
-                <i class="fa-solid fa-clock-rotate-left"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 2px;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                 <span>历史</span>
             </button>
             <button class="nav-item" data-target="analysisView">
-                <i class="fa-solid fa-microchip"></i>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 2px;"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M3 5h4"/></svg>
                 <span>洞察</span>
             </button>
         </nav>
